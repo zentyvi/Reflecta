@@ -13,7 +13,6 @@ export default defineConfig({
   },
   deps: {
     onlyBundle: false,
-    alwaysBundle: (id) =>
-      !isBuiltin(id),
+    alwaysBundle: (id) => !isBuiltin(id),
   },
 });

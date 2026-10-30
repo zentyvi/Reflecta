@@ -1,19 +1,14 @@
-import { createServer } from "node:http";
+// @ts-ignore
+import cors from "cors";
+import express, { json, urlencoded } from "express";
+import "dotenv/config";
+import { getFromEnv } from "./utils/helpers.ts";
 
-import { listUsers } from "./prisma/users";
+const app = express();
+const port = Number(getFromEnv("PORT"));
 
-const port = Number(process.env.PORT ?? 3000);
+app.use(cors());
+app.use(json());
+app.use(urlencoded({ extended: true }));
 
-createServer(async (_request, response) => {
-  try {
-    const users = await listUsers();
-    response.writeHead(200, { "content-type": "application/json" });
-    response.end(JSON.stringify({ users }));
-  } catch (error) {
-    console.error("Failed to query users:", error);
-    response.writeHead(500, { "content-type": "application/json" });
-    response.end(JSON.stringify({ error: "Could not query users yet." }));
-  }
-}).listen(port, "0.0.0.0", () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
+app.listen(port, () => console.log(`Server is running on port ${port}`));

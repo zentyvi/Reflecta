@@ -17,4 +17,8 @@ function getDatabaseUrl(): string | undefined {
 
 const databaseUrl = getDatabaseUrl();
 
-export const db = databaseUrl ? mongo({ contract, url: databaseUrl }) : mongo({ contract });
+export const db = databaseUrl
+  ? mongo({ contract, url: databaseUrl })
+  : mongo({ contract });
+
+export default db.orm;

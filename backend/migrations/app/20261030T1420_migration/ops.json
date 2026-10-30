@@ -1,0 +1,318 @@
+[
+  {
+    "id": "collection.events.create",
+    "label": "Create collection events",
+    "operationClass": "additive",
+    "precheck": [
+      {
+        "description": "collection events does not exist",
+        "source": {
+          "kind": "listCollections"
+        },
+        "filter": {
+          "kind": "field",
+          "field": "name",
+          "op": "$eq",
+          "value": "events"
+        },
+        "expect": "notExists",
+        "object": "collection \"events\""
+      }
+    ],
+    "execute": [
+      {
+        "description": "create collection events",
+        "command": {
+          "kind": "createCollection",
+          "collection": "events",
+          "validator": {
+            "$jsonSchema": {
+              "additionalProperties": false,
+              "bsonType": "object",
+              "properties": {
+                "_id": {
+                  "bsonType": "objectId"
+                },
+                "rating": {
+                  "bsonType": [
+                    "null",
+                    "int"
+                  ]
+                },
+                "title": {
+                  "bsonType": "string"
+                }
+              },
+              "required": [
+                "_id",
+                "title"
+              ]
+            }
+          },
+          "validationLevel": "strict",
+          "validationAction": "error"
+        }
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "collection.memories.create",
+    "label": "Create collection memories",
+    "operationClass": "additive",
+    "precheck": [
+      {
+        "description": "collection memories does not exist",
+        "source": {
+          "kind": "listCollections"
+        },
+        "filter": {
+          "kind": "field",
+          "field": "name",
+          "op": "$eq",
+          "value": "memories"
+        },
+        "expect": "notExists",
+        "object": "collection \"memories\""
+      }
+    ],
+    "execute": [
+      {
+        "description": "create collection memories",
+        "command": {
+          "kind": "createCollection",
+          "collection": "memories",
+          "validator": {
+            "$jsonSchema": {
+              "additionalProperties": false,
+              "bsonType": "object",
+              "properties": {
+                "_id": {
+                  "bsonType": "objectId"
+                },
+                "authorId": {
+                  "bsonType": "objectId"
+                },
+                "createdAt": {
+                  "bsonType": "date"
+                },
+                "date": {
+                  "bsonType": "date"
+                },
+                "events": {
+                  "bsonType": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "note": {
+                  "bsonType": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "rating": {
+                  "bsonType": "int"
+                },
+                "title": {
+                  "bsonType": "string"
+                },
+                "updatedAt": {
+                  "bsonType": "date"
+                }
+              },
+              "required": [
+                "_id",
+                "authorId",
+                "createdAt",
+                "date",
+                "rating",
+                "title",
+                "updatedAt"
+              ]
+            }
+          },
+          "validationLevel": "strict",
+          "validationAction": "error"
+        }
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "collection.users.create",
+    "label": "Create collection users",
+    "operationClass": "additive",
+    "precheck": [
+      {
+        "description": "collection users does not exist",
+        "source": {
+          "kind": "listCollections"
+        },
+        "filter": {
+          "kind": "field",
+          "field": "name",
+          "op": "$eq",
+          "value": "users"
+        },
+        "expect": "notExists",
+        "object": "collection \"users\""
+      }
+    ],
+    "execute": [
+      {
+        "description": "create collection users",
+        "command": {
+          "kind": "createCollection",
+          "collection": "users",
+          "validator": {
+            "$jsonSchema": {
+              "additionalProperties": false,
+              "bsonType": "object",
+              "properties": {
+                "_id": {
+                  "bsonType": "objectId"
+                },
+                "createdAt": {
+                  "bsonType": "date"
+                },
+                "displayName": {
+                  "bsonType": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "password": {
+                  "bsonType": "string"
+                },
+                "updatedAt": {
+                  "bsonType": "date"
+                },
+                "userType": {
+                  "bsonType": "string",
+                  "enum": [
+                    "GOOGLE",
+                    "USERNAME"
+                  ]
+                },
+                "username": {
+                  "bsonType": "string"
+                }
+              },
+              "required": [
+                "_id",
+                "createdAt",
+                "password",
+                "updatedAt",
+                "userType",
+                "username"
+              ]
+            }
+          },
+          "validationLevel": "strict",
+          "validationAction": "error"
+        }
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "index.users.create(username:1)",
+    "label": "Create index on users (username:1)",
+    "operationClass": "additive",
+    "precheck": [
+      {
+        "description": "index does not already exist on users",
+        "source": {
+          "kind": "listIndexes",
+          "collection": "users"
+        },
+        "filter": {
+          "kind": "field",
+          "field": "key",
+          "op": "$eq",
+          "value": {
+            "username": 1
+          }
+        },
+        "expect": "notExists",
+        "object": "an index on { username: 1 } in \"users\""
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index on users",
+        "command": {
+          "kind": "createIndex",
+          "collection": "users",
+          "keys": [
+            {
+              "direction": 1,
+              "field": "username"
+            }
+          ],
+          "unique": true,
+          "name": "username_1"
+        }
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "index exists on users",
+        "source": {
+          "kind": "listIndexes",
+          "collection": "users"
+        },
+        "filter": {
+          "kind": "and",
+          "exprs": [
+            {
+              "kind": "field",
+              "field": "key",
+              "op": "$eq",
+              "value": {
+                "username": 1
+              }
+            },
+            {
+              "kind": "field",
+              "field": "unique",
+              "op": "$eq",
+              "value": true
+            },
+            {
+              "kind": "not",
+              "expr": {
+                "kind": "field",
+                "field": "sparse",
+                "op": "$eq",
+                "value": true
+              }
+            },
+            {
+              "kind": "exists",
+              "field": "expireAfterSeconds",
+              "exists": false
+            },
+            {
+              "kind": "exists",
+              "field": "partialFilterExpression",
+              "exists": false
+            },
+            {
+              "kind": "exists",
+              "field": "wildcardProjection",
+              "exists": false
+            },
+            {
+              "kind": "exists",
+              "field": "collation",
+              "exists": false
+            }
+          ]
+        },
+        "expect": "exists"
+      }
+    ]
+  }
+]

@@ -1,19 +1,41 @@
 // use prisma-8
-
 model User {
-  id       ObjectId @id @map("_id")
-  email    String   @unique
-  username String?
-  name     String?
-  posts    Post[]
+  id          ObjectId @id @map("_id")
+  userType    UserType 
+  username    String   @unique
+  displayName String?
+  password    String
+  createdAt   Date     @onCreate(now())
+  updatedAt   Date     @onCreate(now()) @onUpdate(now())
+  memories    Memory[]
+
   @@map("users")
 }
 
-model Post {
-  id       ObjectId @id @map("_id")
-  title    String
-  content  String?
-  author   User     @relation(fields: [authorId], references: [id])
-  authorId ObjectId
-  @@map("posts")
+enum UserType {
+  GOOGLE
+  USERNAME
+}
+
+model Memory {
+  id        ObjectId @id @map("_id")
+  date      Date
+  title     String
+  events    String?
+  rating    Int32
+  note      String?
+  author    User     @relation(references: [id], fields: [authorId])
+  authorId  ObjectId
+  createdAt Date     @onCreate(now())
+  updatedAt Date     @onCreate(now()) @onUpdate(now())
+
+  @@map("memories")
+}
+
+model Event {
+  id     ObjectId @id @map("_id")
+  title  String
+  rating Int32?
+
+  @@map("events")
 }
