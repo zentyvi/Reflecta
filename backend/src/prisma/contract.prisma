@@ -1,13 +1,16 @@
 // use prisma-8
 model User {
-  id          ObjectId @id @map("_id")
-  userType    UserType 
-  username    String   @unique
-  displayName String?
-  password    String
-  createdAt   Date     @onCreate(now())
-  updatedAt   Date     @onCreate(now()) @onUpdate(now())
-  memories    Memory[]
+  id              ObjectId @id @map("_id")
+  googleId        String?
+  githubId        String?
+  userType        UserType
+  username        String   @unique
+  displayName     String?
+  password        String?
+  createdAt       Date     @onCreate(now())
+  updatedAt       Date     @onCreate(now()) @onUpdate(now())
+  memories        Memory[]
+  passwordVersion Int32
 
   @@map("users")
 }
@@ -15,6 +18,7 @@ model User {
 enum UserType {
   GOOGLE
   USERNAME
+  GITHUB
 }
 
 model Memory {

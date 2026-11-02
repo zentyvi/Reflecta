@@ -1,15 +1,11 @@
-export {}; // Crucial: Makes this file a module so global augmentation works properly
+import type { JwtUserPayload } from "./jwt";
 
-export type RequestUser = {
-  id: string;
-  username: string;
-  type: "USERNAME" | "GOOGLE";
-};
+export {};
 
 declare global {
   namespace Express {
     interface Request {
-      user?: RequestUser | null;
+      user?: JwtUserPayload | null;
     }
   }
 }

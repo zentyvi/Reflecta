@@ -31,6 +31,10 @@
               {
                 "name": "USERNAME",
                 "value": "USERNAME"
+              },
+              {
+                "name": "GITHUB",
+                "value": "GITHUB"
               }
             ]
           }
@@ -209,6 +213,20 @@
                   "kind": "scalar"
                 }
               },
+              "githubId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "mongo/string@1",
+                  "kind": "scalar"
+                }
+              },
+              "googleId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "mongo/string@1",
+                  "kind": "scalar"
+                }
+              },
               "id": {
                 "nullable": false,
                 "type": {
@@ -217,9 +235,16 @@
                 }
               },
               "password": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "mongo/string@1",
+                  "kind": "scalar"
+                }
+              },
+              "passwordVersion": {
+                "nullable": true,
+                "type": {
+                  "codecId": "mongo/int32@1",
                   "kind": "scalar"
                 }
               },
@@ -277,11 +302,20 @@
                 "displayName": {
                   "field": "displayName"
                 },
+                "githubId": {
+                  "field": "githubId"
+                },
+                "googleId": {
+                  "field": "googleId"
+                },
                 "id": {
                   "field": "_id"
                 },
                 "password": {
                   "field": "password"
+                },
+                "passwordVersion": {
+                  "field": "passwordVersion"
                 },
                 "updatedAt": {
                   "field": "updatedAt"
@@ -421,8 +455,29 @@
                         "string"
                       ]
                     },
+                    "githubId": {
+                      "bsonType": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "googleId": {
+                      "bsonType": [
+                        "null",
+                        "string"
+                      ]
+                    },
                     "password": {
-                      "bsonType": "string"
+                      "bsonType": [
+                        "null",
+                        "string"
+                      ]
+                    },
+                    "passwordVersion": {
+                      "bsonType": [
+                        "null",
+                        "int"
+                      ]
                     },
                     "updatedAt": {
                       "bsonType": "date"
@@ -431,7 +486,8 @@
                       "bsonType": "string",
                       "enum": [
                         "GOOGLE",
-                        "USERNAME"
+                        "USERNAME",
+                        "GITHUB"
                       ]
                     },
                     "username": {
@@ -441,7 +497,6 @@
                   "required": [
                     "_id",
                     "createdAt",
-                    "password",
                     "updatedAt",
                     "userType",
                     "username"
@@ -458,7 +513,8 @@
               "kind": "valueSet",
               "values": [
                 "GOOGLE",
-                "USERNAME"
+                "USERNAME",
+                "GITHUB"
               ]
             }
           }
@@ -467,7 +523,7 @@
         "kind": "mongo-database"
       }
     },
-    "storageHash": "4a0c89934834e5e6fe1ea10396cbf6b146002c3b3da77c6450edf415dc11ed4e"
+    "storageHash": "ca009261eff5854d00b26a930c74b8334ebdbcf9e72c34c4d6f8f83ac9738009"
   },
   "execution": {
     "executionHash": "37f7024536c9d43a190c746ddc37120354fe37357499dbd0f88c0cfa38db2b90",

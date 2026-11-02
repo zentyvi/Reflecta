@@ -22,7 +22,7 @@ import type {
 } from '@prisma/orm-mongo/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'4a0c89934834e5e6fe1ea10396cbf6b146002c3b3da77c6450edf415dc11ed4e'>;
+  StorageHashBase<'ca009261eff5854d00b26a930c74b8334ebdbcf9e72c34c4d6f8f83ac9738009'>;
 export type ExecutionHash =
   ExecutionHashBase<'37f7024536c9d43a190c746ddc37120354fe37357499dbd0f88c0cfa38db2b90'>;
 export type ProfileHash =
@@ -37,8 +37,8 @@ type FieldTypeOverrides = {
     readonly models: {
       readonly User: {
         readonly userType: {
-          readonly output: 'GOOGLE' | 'USERNAME';
-          readonly input: 'GOOGLE' | 'USERNAME';
+          readonly output: 'GOOGLE' | 'USERNAME' | 'GITHUB';
+          readonly input: 'GOOGLE' | 'USERNAME' | 'GITHUB';
         };
       };
     };
@@ -82,8 +82,11 @@ export namespace Models {
   export type unbound_User = {
     createdAt: FieldOutputTypes['__unbound__']['User']['createdAt'];
     displayName: FieldOutputTypes['__unbound__']['User']['displayName'];
+    githubId: FieldOutputTypes['__unbound__']['User']['githubId'];
+    googleId: FieldOutputTypes['__unbound__']['User']['googleId'];
     id: FieldOutputTypes['__unbound__']['User']['id'];
     password: FieldOutputTypes['__unbound__']['User']['password'];
+    passwordVersion: FieldOutputTypes['__unbound__']['User']['passwordVersion'];
     updatedAt: FieldOutputTypes['__unbound__']['User']['updatedAt'];
     userType: FieldOutputTypes['__unbound__']['User']['userType'];
     username: FieldOutputTypes['__unbound__']['User']['username'];
@@ -177,18 +180,20 @@ type ContractBase = Omit<
                     readonly _id: { readonly bsonType: 'objectId' };
                     readonly createdAt: { readonly bsonType: 'date' };
                     readonly displayName: { readonly bsonType: readonly ['null', 'string'] };
-                    readonly password: { readonly bsonType: 'string' };
+                    readonly githubId: { readonly bsonType: readonly ['null', 'string'] };
+                    readonly googleId: { readonly bsonType: readonly ['null', 'string'] };
+                    readonly password: { readonly bsonType: readonly ['null', 'string'] };
+                    readonly passwordVersion: { readonly bsonType: readonly ['null', 'int'] };
                     readonly updatedAt: { readonly bsonType: 'date' };
                     readonly userType: {
                       readonly bsonType: 'string';
-                      readonly enum: readonly ['GOOGLE', 'USERNAME'];
+                      readonly enum: readonly ['GOOGLE', 'USERNAME', 'GITHUB'];
                     };
                     readonly username: { readonly bsonType: 'string' };
                   };
                   readonly required: readonly [
                     '_id',
                     'createdAt',
-                    'password',
                     'updatedAt',
                     'userType',
                     'username',
@@ -324,13 +329,25 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
               };
+              readonly githubId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+              };
+              readonly googleId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+              };
               readonly id: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/objectId@1' };
               };
               readonly password: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
+              };
+              readonly passwordVersion: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/int32@1' };
               };
               readonly updatedAt: {
                 readonly nullable: false;
@@ -363,8 +380,11 @@ type ContractBase = Omit<
               readonly fields: {
                 readonly createdAt: { readonly field: 'createdAt' };
                 readonly displayName: { readonly field: 'displayName' };
+                readonly githubId: { readonly field: 'githubId' };
+                readonly googleId: { readonly field: 'googleId' };
                 readonly id: { readonly field: '_id' };
                 readonly password: { readonly field: 'password' };
+                readonly passwordVersion: { readonly field: 'passwordVersion' };
                 readonly updatedAt: { readonly field: 'updatedAt' };
                 readonly userType: { readonly field: 'userType' };
                 readonly username: { readonly field: 'username' };
@@ -378,6 +398,7 @@ type ContractBase = Omit<
             readonly members: readonly [
               { readonly name: 'GOOGLE'; readonly value: 'GOOGLE' },
               { readonly name: 'USERNAME'; readonly value: 'USERNAME' },
+              { readonly name: 'GITHUB'; readonly value: 'GITHUB' },
             ];
           };
         };
@@ -385,6 +406,7 @@ type ContractBase = Omit<
           readonly UserType: readonly [
             { readonly name: 'GOOGLE'; readonly value: 'GOOGLE' },
             { readonly name: 'USERNAME'; readonly value: 'USERNAME' },
+            { readonly name: 'GITHUB'; readonly value: 'GITHUB' },
           ];
         };
       };
