@@ -1,8 +1,10 @@
 import { useState } from "react";
 import FormInput from "../../components/FormInput.tsx";
+import type { ErrorsObject } from "../../../@types/ErrorObjects";
 
 function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState<ErrorsObject>({});
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -12,6 +14,7 @@ function LoginForm() {
         name="username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
+        error={errors?.username}
         label={
           <>
             <img src="/assets/icons/user.svg" alt="" aria-hidden />{" "}
@@ -26,6 +29,7 @@ function LoginForm() {
         name="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        error={errors?.password}
         label={
           <>
             <img src="/assets/icons/lock.svg" alt="" aria-hidden />{" "}

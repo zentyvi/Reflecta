@@ -1,8 +1,11 @@
 import { useState } from "react";
 import FormInput from "../../components/FormInput.tsx";
+import type { ErrorsObject } from "../../../@types/ErrorObjects";
+import { validatePassword, validateUsername } from "../../utils/validators.ts";
 
 function RegisterForm() {
   const [showPasswords, setShowPasswords] = useState(false);
+  const [errors, setErrors] = useState<ErrorsObject>({});
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -19,7 +22,11 @@ function RegisterForm() {
       <FormInput
         name="username"
         value={username}
-        onChange={(e) => setUsername(e.target.value)}
+        onChange={(e) => {
+          setUsername(e.target.value);
+          validateUsername(e, setErrors, "username");
+        }}
+        error={errors?.username}
         label={
           <>
             <img src="/assets/icons/user.svg" alt="" aria-hidden />{" "}
@@ -33,7 +40,11 @@ function RegisterForm() {
         type="password"
         name="password"
         value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        onChange={(e) => {
+          setPassword(e.target.value);
+          validatePassword(e, setErrors, "password");
+        }}
+        error={!passwordsMatch ? "Passwords don't match" : errors?.password}
         label={
           <>
             <img src="/assets/icons/lock.svg" alt="" aria-hidden />{" "}
@@ -43,7 +54,6 @@ function RegisterForm() {
         placeholder="•••••••••"
         showPassword={showPasswords}
         onShowPassword={onShowPassword}
-        error={!passwordsMatch ? "Passwords don't match" : ""}
         required
       />
       <FormInput

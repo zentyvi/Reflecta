@@ -1,9 +1,6 @@
-const styles = {} as CSSModuleClasses;
+import type { FieldErrors } from "../../@types/ErrorObjects";
 
-type ErrorObject = {
-  msg: string;
-  [key: string]: any;
-};
+const styles = {} as CSSModuleClasses;
 
 type BaseProps = {
   disabled?: boolean;
@@ -13,7 +10,7 @@ type BaseProps = {
   onChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   label: string | React.ReactNode;
   placeholder?: string;
-  error?: string | ErrorObject;
+  error?: string | FieldErrors | null;
   subTitle?: string;
 };
 
