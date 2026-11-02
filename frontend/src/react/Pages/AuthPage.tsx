@@ -21,7 +21,9 @@ function AuthPage() {
       <div>
         {/* Site header */}
         <div>
-          <span>Reflecta</span>
+          <span aria-label="logo" data-testid="logo">
+            Reflecta
+          </span>
           <nav>
             <ul>
               <li>
