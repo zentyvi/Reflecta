@@ -1,0 +1,19 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Github OAuth button > renders button correctly 1`] = `
+<div>
+  <button
+    aria-label="Login via GitHub"
+    class="undefined "
+    type="button"
+  >
+    <img
+      alt="Github logo"
+      src="https://thesvg.org/icons/github/default.svg"
+    />
+    <span>
+      GitHub
+    </span>
+  </button>
+</div>
+`;

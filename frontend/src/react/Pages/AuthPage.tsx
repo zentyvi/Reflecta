@@ -1,9 +1,20 @@
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Link, Outlet, useLocation } from "react-router";
+import GoogleLoginButton from "../features/auth/OAuth_buttons/GoogleLogInButton.tsx";
+import GithubLoginButton from "../features/auth/OAuth_buttons/GithubLogInButton.tsx";
 
 function AuthPage() {
   const { pathname } = useLocation();
   const isLoginPage = pathname.includes("login");
+  const subTitle = isLoginPage ? (
+    <>
+      Sign in your account, or <Link to="/auth/register">create one</Link>.
+    </>
+  ) : (
+    <>
+      Create an account, or <Link to="/auth/login">login</Link>.
+    </>
+  );
 
   return (
     <GoogleOAuthProvider clientId={import.meta.env["VITE_GOOGLE_CLIENT_ID"]}>
@@ -24,9 +35,27 @@ function AuthPage() {
             </ul>
           </nav>
         </div>
-        {/* Register/Login form */}
         <main>
+          {/* Hidden heading */}
+          <h1 className="visually-hidden">
+            {isLoginPage ? "Login" : "Register"}
+          </h1>
+          {/* Form header */}
+          <div>
+            <span>Hello!</span>
+            <p>{subTitle}</p>
+          </div>
+          {/* Form from Outlet */}
           <Outlet />
+          {/* Separator */}
+          <div>
+            <span>Or use</span>
+          </div>
+          {/* OAuth buttons */}
+          <div>
+            <GoogleLoginButton />
+            <GithubLoginButton />
+          </div>
         </main>
       </div>
       {/* Banner */}

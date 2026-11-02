@@ -1,0 +1,19 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Google OAuth button > renders button correctly 1`] = `
+<div>
+  <button
+    aria-label="Login via Google"
+    class=""
+  >
+    <img
+      alt="Google logo"
+      src="https://thesvg.org/icons/google/default.svg"
+    />
+     
+    <span>
+      Google
+    </span>
+  </button>
+</div>
+`;

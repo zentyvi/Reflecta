@@ -1,7 +1,11 @@
 const styles = {} as CSSModuleClasses;
 
-function GithubLoginButton() {
-  const handleGitHubLogin = () => {
+type Props = {
+  className?: string;
+};
+
+function GithubLoginButton({ className = "" }: Props) {
+  const handleGithubLogin = () => {
     const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
     const redirectUri = `${window.location.origin}/auth/github`;
     const githubUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(
@@ -14,9 +18,9 @@ function GithubLoginButton() {
   return (
     <button
       type="button"
-      onClick={handleGitHubLogin}
-      className={styles["github-btn"]}
-      aria-label="Log in via GitHub"
+      onClick={handleGithubLogin}
+      className={`${styles["github-btn"]} ${className}`}
+      aria-label="Login via GitHub"
     >
       <img
         src="https://thesvg.org/icons/github/default.svg"
