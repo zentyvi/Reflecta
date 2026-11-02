@@ -1,6 +1,6 @@
 import type { Handler } from "express";
-import type { RequestUser } from "../@types/express";
-import { verify } from "jsonwebtoken";
+import type { JwtUserPayload } from "../@types/jwt";
+import jwt from "jsonwebtoken";
 import { getFromEnv } from "../utils/helpers.ts";
 
 export const authorizeUser: Handler = (req, res, next) => {
@@ -13,8 +13,8 @@ export const authorizeUser: Handler = (req, res, next) => {
   }
 
   try {
-    const decoded = verify(token, getFromEnv("SECRET"));
-    req.user = decoded as RequestUser;
+    const decoded = jwt.verify(token, getFromEnv("SECRET"));
+    req.user = decoded as JwtUserPayload;
   } catch (err) {
     req.user = null;
   }

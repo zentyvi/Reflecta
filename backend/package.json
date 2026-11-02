@@ -16,7 +16,7 @@
     "db:verify": "prisma db verify",
     "db:seed": "node src/prisma/seed.ts",
     "deploy": "npm run build && npm run composer:deploy",
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch src",
     "dev:composer": "npm run build && npm run composer:dev",
     "migrate": "prisma db migrate",
     "migration:plan": "prisma migration plan",

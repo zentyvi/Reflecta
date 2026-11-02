@@ -1,4 +1,4 @@
-import { sign } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import type { JwtUserPayload } from "../@types/jwt";
 
 const adjectives = [
@@ -101,7 +101,7 @@ export const createJWT = <
   duration: string = "7d",
 ) => {
   // @ts-ignore
-  const jwtToken = sign(
+  const jwtToken = jwt.sign(
     {
       id: data.id,
       username: data.username,
