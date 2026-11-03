@@ -6,20 +6,16 @@ type Validator = (
   field?: string,
 ) => void;
 
-const validateUsername: Validator = (e, setErrors, field = "username") => {
+export const validateUsername: Validator = (
+  e,
+  setErrors,
+  field = "username",
+) => {
   const { value } = e.target;
 
   if (value.length > 0) {
-    const usernameRegex = /^[a-zA-Z0-9]([a-zA-Z0-9_|-]{1,28}[a-zA-Z0-9])?$/;
-    if (!usernameRegex.test(value)) {
-      setErrors((prev) => ({
-        ...prev,
-        [field]: {
-          msg: "Username can only contain letters, numbers, underscores and hyphens",
-        },
-      }));
-      return;
-    }
+    const usernameRegex = /^[a-zA-Z0-9][a-zA-Z0-9_|-]*[a-zA-Z0-9]$/;
+    // Check the length first
     if (value.length > 30 || value.length < 3) {
       setErrors((prev) => ({
         ...prev,
@@ -29,17 +25,29 @@ const validateUsername: Validator = (e, setErrors, field = "username") => {
       }));
       return;
     }
+    if (!usernameRegex.test(value)) {
+      setErrors((prev) => ({
+        ...prev,
+        [field]: {
+          msg: "Username can only contain letters, numbers, underscores and hyphens",
+        },
+      }));
+      return;
+    }
   }
   setErrors((prev) => ({ ...prev, [field]: null }));
 };
 
-const validatePassword: Validator = (e, setErrors, field = "password") => {
+export const validatePassword: Validator = (
+  e,
+  setErrors,
+  field = "password",
+) => {
   const { value } = e.target;
 
   if (value.length > 0) {
     const passwordRegex = /^[A-Za-z0-9!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]+$/;
-    const result = passwordRegex.test(value);
-    if (!result) {
+    if (!passwordRegex.test(value)) {
       setErrors((prev) => ({
         ...prev,
         [field]: {
@@ -58,5 +66,3 @@ const validatePassword: Validator = (e, setErrors, field = "password") => {
   }
   setErrors((prev) => ({ ...prev, [field]: null }));
 };
-
-export { validateUsername, validatePassword };
