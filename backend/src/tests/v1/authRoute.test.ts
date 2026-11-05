@@ -105,7 +105,7 @@ describe("Google Login Integration Test", () => {
     // Send request with a fake Google ID token
     const response = await request(app)
       .post("/api/v1/auth/google") // Adjust route path to your app
-      .send({ token: "fake-google-id-token" });
+      .send({ token: "fake_google_id_token" });
 
     expect(response.status).toBe(200);
 

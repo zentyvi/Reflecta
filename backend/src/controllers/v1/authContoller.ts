@@ -54,7 +54,7 @@ const login: Handler = async (req, res, next) => {
         .json({ errors: { username: { msg: "User doesn't exist" } } });
     }
 
-    if (user.userType !== "USERNAME" ) {
+    if (user.userType !== "USERNAME") {
       return res.status(400).json({
         errors: {
           password: {

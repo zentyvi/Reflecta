@@ -1,5 +1,5 @@
+import "dotenv/config";
 import jwt from "jsonwebtoken";
-import type { JwtUserPayload } from "../@types/jwt";
 
 const adjectives = [
   "cute",
