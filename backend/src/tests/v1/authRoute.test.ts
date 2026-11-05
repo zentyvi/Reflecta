@@ -101,6 +101,10 @@ describe("Auth Controller Integration Tests", () => {
 });
 
 describe("Google Login Integration Test", () => {
+  afterAll(async () => {
+    await db.orm.users.where({ googleId: "google_123456789" }).delete();
+  });
+
   it("should successfully log in or register user via Google token and return JWT", async () => {
     // Send request with a fake Google ID token
     const response = await request(app)
@@ -124,6 +128,10 @@ describe("Google Login Integration Test", () => {
 });
 
 describe("GitHub Login Integration Test", () => {
+  afterAll(async () => {
+    await db.orm.users.where({ githubId: "987654321" }).delete();
+  });
+
   it("should successfully authenticate via GitHub code and return JWT", async () => {
     // Mock global fetch responses for GitHub OAuth flow
     const fetchSpy = vi.spyOn(global, "fetch").mockImplementation((url) => {
