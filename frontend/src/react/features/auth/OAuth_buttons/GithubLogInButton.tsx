@@ -1,10 +1,11 @@
 const styles = {} as CSSModuleClasses;
 
 type Props = {
+  disabled?: boolean;
   className?: string;
 };
 
-function GithubLoginButton({ className = "" }: Props) {
+function GithubLoginButton({ className = "", disabled = false }: Props) {
   const handleGithubLogin = () => {
     const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
     const redirectUri = `${window.location.origin}/auth/github`;
@@ -21,6 +22,7 @@ function GithubLoginButton({ className = "" }: Props) {
       onClick={handleGithubLogin}
       className={`${styles["github-btn"]} ${className}`}
       aria-label="Login via GitHub"
+      disabled={disabled}
     >
       <img
         src="https://thesvg.org/icons/github/default.svg"

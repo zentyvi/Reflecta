@@ -1,7 +1,5 @@
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Link, Outlet, useLocation } from "react-router";
-import GoogleLoginButton from "../features/auth/OAuth_buttons/GoogleLogInButton.tsx";
-import GithubLoginButton from "../features/auth/OAuth_buttons/GithubLogInButton.tsx";
 
 function AuthPage() {
   const { pathname } = useLocation();
@@ -49,15 +47,6 @@ function AuthPage() {
           </div>
           {/* Form from Outlet */}
           <Outlet />
-          {/* Separator */}
-          <div>
-            <span>Or use</span>
-          </div>
-          {/* OAuth buttons */}
-          <div>
-            <GoogleLoginButton />
-            <GithubLoginButton />
-          </div>
         </main>
       </div>
       {/* Banner */}

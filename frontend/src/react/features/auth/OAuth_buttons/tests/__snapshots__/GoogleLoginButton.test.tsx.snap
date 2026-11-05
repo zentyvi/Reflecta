@@ -10,7 +10,6 @@ exports[`Google OAuth button > renders button correctly 1`] = `
       alt="Google logo"
       src="https://thesvg.org/icons/google/default.svg"
     />
-     
     <span>
       Google
     </span>

@@ -1,8 +1,8 @@
-import { describe, it, expect, vi } from "vitest";
+import { useGoogleLogin } from "@react-oauth/google";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
 import GoogleLoginButton from "../GoogleLogInButton.tsx";
-import { useGoogleLogin } from "@react-oauth/google";
 
 vi.mock("@react-oauth/google");
 

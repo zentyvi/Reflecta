@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
 import { createMemoryRouter, RouterProvider } from "react-router";
+import { describe, expect, it } from "vitest";
 import AuthPage from "../AuthPage.tsx";
 
 describe("AuthPage Component (React Router v7)", () => {
