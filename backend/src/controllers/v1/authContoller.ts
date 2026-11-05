@@ -1,19 +1,19 @@
+import bcrypt from "bcryptjs";
 import type { Handler } from "express";
 import { validationResult } from "express-validator";
 import { OAuth2Client } from "google-auth-library";
-import bcrypt from "bcryptjs";
 import validateSignUp from "../../middlewares/validators/validateSignUp.ts";
+import { db } from "../../prisma/db.ts";
 import {
   createJWT,
   generateDefaultUsername,
   getFromEnv,
 } from "../../utils/helpers.js";
-import orm from "../../prisma/db.ts";
-import type { JwtUserPayload } from "../../@types/jwt";
 
-const google_client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const GOOGLE_CLIENT_ID = getFromEnv("GOOGLE_CLIENT_ID");
+const google_client = new OAuth2Client(GOOGLE_CLIENT_ID);
 
-const _signUpPost: Handler = async (req, res, next) => {
+const _signUp: Handler = async (req, res, next) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -22,12 +22,14 @@ const _signUpPost: Handler = async (req, res, next) => {
     const { username, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await orm.users.select("id", "username", "userType").create({
-      username,
-      password: hashedPassword,
-      userType: "USERNAME",
-      passwordVersion: 1,
-    });
+    const user = await db.orm.users
+      .select("id", "username", "userType", "passwordVersion")
+      .create({
+        username: username.toLowerCase(),
+        password: hashedPassword,
+        userType: "USERNAME",
+        passwordVersion: 1,
+      });
 
     const token = createJWT(user);
 
@@ -37,12 +39,12 @@ const _signUpPost: Handler = async (req, res, next) => {
   }
 };
 
-const signUpPost = [validateSignUp, _signUpPost];
+const signUp = [validateSignUp, _signUp];
 
-const logInPost: Handler = async (req, res, next) => {
+const login: Handler = async (req, res, next) => {
   try {
     const { username, password } = req.body;
-    const user = await orm.users
+    const user = await db.orm.users
       .where({ username: username.toLowerCase() })
       .first();
 
@@ -52,9 +54,15 @@ const logInPost: Handler = async (req, res, next) => {
         .json({ errors: { username: { msg: "User doesn't exist" } } });
     }
 
-    // if (!user.password) {
-    //   return res.status(400).json({errors: {password: {msg: "You used another method to login"}}})
-    // }
+    if (user.userType !== "USERNAME" ) {
+      return res.status(400).json({
+        errors: {
+          password: {
+            msg: "You've used another method to login (Google or Github)",
+          },
+        },
+      });
+    }
 
     const passwrodMatch = await bcrypt.compare(password, user?.password ?? "");
     if (!passwrodMatch) {
@@ -77,7 +85,7 @@ const logInPost: Handler = async (req, res, next) => {
   }
 };
 
-const googleLogInPost: Handler = async (req, res, next) => {
+const googleLogin: Handler = async (req, res, next) => {
   try {
     const { token: googleToken } = req.body;
     if (!googleToken) {
@@ -88,13 +96,14 @@ const googleLogInPost: Handler = async (req, res, next) => {
 
     const ticket = await google_client.verifyIdToken({
       idToken: googleToken,
-      audience: getFromEnv("GOOGLE_CLIENT_ID"),
+      audience: GOOGLE_CLIENT_ID,
     });
     const payload = ticket.getPayload();
     const username = generateDefaultUsername();
 
-    const user = await orm.users
+    const user = await db.orm.users
       .select("id", "username", "userType", "passwordVersion")
+      .where({ googleId: payload?.sub })
       .upsert({
         update: {},
         create: { username, userType: "GOOGLE", googleId: payload?.sub },
@@ -108,7 +117,7 @@ const googleLogInPost: Handler = async (req, res, next) => {
   }
 };
 
-const githubLogInPost: Handler = async (req, res, next) => {
+const githubLogin: Handler = async (req, res, next) => {
   try {
     const { code } = req.body;
     if (!code) {
@@ -146,10 +155,14 @@ const githubLogInPost: Handler = async (req, res, next) => {
 
     const githubUser = await userResponse.json();
     const githubId = String(githubUser.id);
-    const username = githubUser?.login ?? generateDefaultUsername();
+    const username =
+      typeof githubUser?.login === "string"
+        ? githubUser?.login.toLowerCase()
+        : generateDefaultUsername();
 
-    const user = await orm.users
+    const user = await db.orm.users
       .select("id", "username", "userType", "passwordVersion")
+      .where({ githubId: githubId })
       .upsert({
         update: {},
         create: { githubId, username, userType: "GITHUB" },
@@ -164,10 +177,10 @@ const githubLogInPost: Handler = async (req, res, next) => {
 };
 
 const authController = {
-  signUpPost,
-  logInPost,
-  googleLogInPost,
-  githubLogInPost,
+  signUp,
+  login,
+  googleLogin,
+  githubLogin,
 };
 
 export default authController;

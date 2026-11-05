@@ -1,5 +1,5 @@
 import { body } from "express-validator";
-import orm from "../../prisma/db.ts";
+import { db } from "../../prisma/db.ts";
 
 const validateSignUp = [
   body("username")
@@ -14,16 +14,17 @@ const validateSignUp = [
     .matches(/^[a-zA-Z0-9]([a-zA-Z0-9_|-]{1,28}[a-zA-Z0-9])?$/)
     .withMessage("Invalid username")
     .custom(async (value: string) => {
-      const user = await orm.users
+      const user = await db.orm.users
         .where({ username: value.toLowerCase() })
+        .select("id")
         .first();
-
       if (user) {
         throw new Error("User already exists");
       }
 
       return true;
     }),
+
   body("password")
     .trim()
     .notEmpty()
@@ -34,13 +35,15 @@ const validateSignUp = [
     )
     .isLength({ min: 6 })
     .withMessage("Password must contain at least 6 characters"),
-  body("password-confirmation")
-    .trim()
-    .custom((value: string, { req }) => {
-      if (!value === req.body["password"]) {
-        throw new Error("Password don't match");
-      }
 
+  body("password_confirmation")
+    .trim()
+    .notEmpty()
+    .withMessage("You must confirm your password")
+    .custom((value: string, { req }) => {
+      if (value !== req.body["password"]) {
+        throw new Error("Passwords don't match");
+      }
       return true;
     }),
 ];
