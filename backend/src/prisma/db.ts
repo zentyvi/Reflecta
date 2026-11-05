@@ -1,6 +1,6 @@
+import "dotenv/config";
 import mongo from "@prisma/orm-mongo/runtime";
 import { contractFromJson } from "@prisma/orm-mongo/static";
-
 import service from "../../service.ts";
 import type { Contract } from "./contract.d.ts";
 import contractJson from "./contract.json" with { type: "json" };
@@ -20,5 +20,3 @@ const databaseUrl = getDatabaseUrl();
 export const db = databaseUrl
   ? mongo({ contract, url: databaseUrl })
   : mongo({ contract });
-
-export default db.orm;
