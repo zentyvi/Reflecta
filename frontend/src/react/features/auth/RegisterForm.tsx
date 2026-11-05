@@ -58,7 +58,7 @@ function RegisterForm() {
       />
       <FormInput
         type="password"
-        name="password-confirmation"
+        name="password_confirmation"
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
         label={
