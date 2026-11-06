@@ -1,7 +1,5 @@
 import bcrypt from "bcryptjs";
-import type { Handler, RequestHandler } from "express";
 import { validationResult } from "express-validator";
-import { OAuth2Client } from "google-auth-library";
 import validateSignUp from "../../middlewares/validators/validateSignUp.middleware.ts";
 import { db } from "../../prisma/db.ts";
 import type {
@@ -17,7 +15,6 @@ import {
 } from "../../utils/helpers.js";
 
 const GOOGLE_CLIENT_ID = getFromEnv("GOOGLE_CLIENT_ID");
-const google_client = new OAuth2Client(GOOGLE_CLIENT_ID);
 
 const _signUp: SignUpHandler = async (req, res, next) => {
   try {
@@ -55,7 +52,7 @@ const login: LoginHandler = async (req, res, next) => {
       .first();
 
     if (!user) {
-      return res.status(404).json({
+      return res.status(400).json({
         errors: { username: { msg: "User doesn't exist" } },
         success: false,
       });
@@ -104,19 +101,32 @@ const googleLogin: GoogleLoginHanlder = async (req, res, next) => {
       });
     }
 
-    const ticket = await google_client.verifyIdToken({
-      idToken: googleToken,
-      audience: GOOGLE_CLIENT_ID,
-    });
-    const payload = ticket.getPayload();
+    const userResponse = await fetch(
+      "https://www.googleapis.com/oauth2/v3/userinfo",
+      {
+        headers: {
+          Authorization: `Bearer ${googleToken}`,
+        },
+      },
+    );
+
+    if (!userResponse.ok) {
+      return res
+        .status(401)
+        .json({ message: "Failed to fetch user from Google", success: false });
+    }
+
+    const googleUser = await userResponse.json();
+
+    const googleId = googleUser.sub;
     const username = generateDefaultUsername();
 
     const user = await db.orm.users
       .select("id", "username", "userType", "passwordVersion")
-      .where({ googleId: payload?.sub })
+      .where({ googleId })
       .upsert({
         update: {},
-        create: { username, userType: "GOOGLE", googleId: payload?.sub },
+        create: { username, userType: "GOOGLE", googleId },
       });
 
     const token = createJWT(user);

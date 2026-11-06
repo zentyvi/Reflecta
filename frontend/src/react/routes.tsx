@@ -3,6 +3,7 @@ import App from "./App.tsx";
 import AuthPage from "./Pages/AuthPage.tsx";
 import LoginForm from "./features/auth/LoginForm.tsx";
 import RegisterForm from "./features/auth/RegisterForm.tsx";
+import GithubCallbackPage from "./Pages/GithubCallbackPage.tsx";
 
 const siteRouter = createBrowserRouter([
   {
@@ -18,6 +19,7 @@ const siteRouter = createBrowserRouter([
           { path: "/auth/register", element: <RegisterForm /> },
         ],
       },
+      { path: "/auth/github", element: <GithubCallbackPage /> },
     ],
   },
 ]);

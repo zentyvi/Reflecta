@@ -105,35 +105,68 @@ describe("Auth Controller Integration Tests", () => {
   });
 });
 
-describe("Google Login Integration Test", () => {
-  afterAll(async () => {
-    await db.orm.users.where({ googleId: "google_123456789" }).delete();
-  });
+describe("Google Login Integration Test)", () => {
+  it("should successfully fetch Google user info, upsert user, and return JWT", async () => {
+    // Mock global fetch to simulate Google's userinfo endpoint response
+    const fetchSpy = vi.spyOn(global, "fetch").mockImplementation((url) => {
+      if (String(url).includes("googleapis.com/oauth2/v3/userinfo")) {
+        return Promise.resolve(
+          new Response(
+            JSON.stringify({
+              sub: "google_sub_123456789",
+              email: "test@gmail.com",
+            }),
+            { status: 200 },
+          ),
+        );
+      }
+      return Promise.reject(new Error("Unknown fetch URL"));
+    });
 
-  it("should successfully log in or register user via Google token and return JWT", async () => {
-    // Send request with a fake Google ID token
+    // Send request with the Google access token
     const response = await request(app)
-      .post("/api/v1/auth/google") // Adjust route path to your app
-      .send({ googleToken: "fake_google_id_token" });
+      .post("/api/v1/auth/google") // Adjust your route path if necessary
+      .send({ googleToken: "fake_google_access_token" });
 
+    // Verify response status and structure
     expect(response.status).toBe(200);
-
-    // Ensure JWT token is returned
     expect(response.body).toHaveProperty("token");
-    expect(response.body.success).toBeTruthy();
+    expect(response.body.success).toBe(true);
+
+    // Restore original fetch after test
+    fetchSpy.mockRestore();
   });
 
-  it("should return 400 if Google token is missing", async () => {
-    // Send request without token property
+  it("should return 400 Bad Request if googleToken is missing", async () => {
+    // Send request without googleToken
     const response = await request(app).post("/api/v1/auth/google").send({});
 
-    // Expect bad request error
+    // Verify error response
     expect(response.status).toBe(400);
-    expect(response.body).toHaveProperty("message");
-    expect(response.body.success).toBeFalsy();
+    expect(response.body.success).toBe(false);
+    expect(response.body.message).toBe("Authorization google id is required");
+  });
+
+  it("should return 401 Unauthorized if Google API fetch fails", async () => {
+    // Mock fetch to return a failed response (e.g. invalid token)
+    const fetchSpy = vi.spyOn(global, "fetch").mockImplementation(() => {
+      return Promise.resolve(new Response(null, { status: 401 }));
+    });
+
+    // Send request with an invalid/expired token
+    const response = await request(app)
+      .post("/api/v1/auth/google")
+      .send({ googleToken: "expired_or_invalid_token" });
+
+    // Verify error response
+    expect(response.status).toBe(401);
+    expect(response.body.success).toBe(false);
+    expect(response.body.message).toBe("Failed to fetch user from Google");
+
+    // Restore fetch
+    fetchSpy.mockRestore();
   });
 });
-
 describe("GitHub Login Integration Test", () => {
   afterAll(async () => {
     await db.orm.users.where({ githubId: "987654321" }).delete();

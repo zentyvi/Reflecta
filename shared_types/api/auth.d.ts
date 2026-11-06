@@ -2,6 +2,8 @@ import type { ErrorsObject } from "../ErrorObjects.d.ts";
 
 export {};
 
+// API responses
+
 type AuthErrorsBody = {
   success: false;
   errors: ErrorsObject;
@@ -25,6 +27,8 @@ type OAuthSuccessBody = {
 };
 
 export type OAuthResponseBody = OAuthErrorsBody | OAuthSuccessBody;
+
+// API requests body, used in the frontend for typing function parameters
 
 export type SignUpRequestBody = {
   username: string;

@@ -1,4 +1,6 @@
 import { useGoogleLogin } from "@react-oauth/google";
+import api from "../../../../api/index.ts";
+import useAuth from "../../../contexts/AuthProvider.tsx";
 
 type Props = {
   disabled?: boolean;
@@ -6,9 +8,21 @@ type Props = {
 };
 
 function GoogleLoginButton({ className = "", disabled = false }: Props) {
+  const { login } = useAuth();
+  const handleSuccess = async (token: string) => {
+    try {
+      const result = await api.auth.googleLogin(token);
+      if (result.success) {
+        login(result.token);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const handleLogin = useGoogleLogin({
-    onSuccess: (tokenResponse) => console.log(tokenResponse),
-    onError: (err) => console.error(`[Google login failed] ${err}`),
+    onSuccess: (tokenResponse) => handleSuccess(tokenResponse.access_token),
+    onError: (err) => console.error(`[Google login failed] - ${err}`),
   });
 
   return (

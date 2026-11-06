@@ -14,7 +14,7 @@
     "forceConsistentCasingInFileNames": true,
     "types": ["node", "cors", "express"],
     "paths": {
-      "@shared/*": ["../types/*"]
+      "@shared/*": ["../shared_types/*"]
     }
   },
   "include": ["src/**/*.ts"]

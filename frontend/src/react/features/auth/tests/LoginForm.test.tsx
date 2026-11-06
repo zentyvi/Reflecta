@@ -9,8 +9,7 @@ vi.mock("@react-oauth/google");
 vi.mock("../../../contexts/AuthProvider.tsx");
 
 describe("Login form", () => {
-  // @ts-ignore
-  vi.mocked(useAuth).mockImplementation(() => ({ login: vi.fn() }));
+  vi.mocked(useAuth).mockImplementation(() => ({ login: vi.fn() }) as any);
   vi.mocked(useGoogleLogin).mockImplementation(() => vi.fn());
 
   it("renders form", () => {

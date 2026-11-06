@@ -11,6 +11,9 @@ async function signUp(data: SignUpRequestBody) {
   const response = await fetch(`${authUrl}/sign-up`, {
     method: "POST",
     body: JSON.stringify(data),
+    headers: {
+      "Content-type": "application/json",
+    },
   });
 
   if (!response.ok && response.status !== 400) {
@@ -27,6 +30,9 @@ async function login(data: LoginRequestBody) {
   const response = await fetch(`${authUrl}/login`, {
     method: "POST",
     body: JSON.stringify(data),
+    headers: {
+      "Content-type": "application/json",
+    },
   });
 
   if (!response.ok && response.status !== 400) {
@@ -43,6 +49,9 @@ async function googleLogin(googleToken: string) {
   const response = await fetch(`${authUrl}/google`, {
     method: "POST",
     body: JSON.stringify({ googleToken }),
+    headers: {
+      "Content-type": "application/json",
+    },
   });
 
   if (!response.ok) {
@@ -59,6 +68,9 @@ async function githubLogin(code: string) {
   const response = await fetch(`${authUrl}/github`, {
     method: "POST",
     body: JSON.stringify({ code }),
+    headers: {
+      "Content-type": "application/json",
+    },
   });
 
   if (!response.ok) {

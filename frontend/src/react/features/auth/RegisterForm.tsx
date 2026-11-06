@@ -1,28 +1,56 @@
 import { useState } from "react";
-import type { ErrorsObject } from "../../../../../types/ErrorObjects.d.ts";
+import type { ErrorsObject } from "@shared/ErrorObjects.d.ts";
 import FormInput from "../../components/FormInput.tsx";
 import { validatePassword, validateUsername } from "../../utils/validators.ts";
 import GithubLoginButton from "./OAuth_buttons/GithubLogInButton.tsx";
 import GoogleLoginButton from "./OAuth_buttons/GoogleLogInButton.tsx";
+import useAuth from "../../contexts/AuthProvider.tsx";
+import api from "../../../api/index.ts";
 
 function RegisterForm() {
   const [showPasswords, setShowPasswords] = useState(false);
   const [errors, setErrors] = useState<ErrorsObject>({});
+  const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [password_confirmation, setPassword_confirmation] = useState("");
+  const { login } = useAuth();
+
+  const handleSubmit: React.SubmitEventHandler = async (e) => {
+    try {
+      e.preventDefault();
+      setLoading(true);
+      const data = {
+        username: username.toLowerCase(),
+        password,
+        password_confirmation,
+      };
+      const result = await api.auth.signUp(data);
+      if (!result.success) {
+        setErrors(result.errors);
+        return;
+      }
+
+      login(result.token);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const passwordsMatch =
-    password === confirmPassword ||
+    password === password_confirmation ||
     password.length === 0 ||
-    confirmPassword.length === 0;
+    password_confirmation.length === 0;
 
   const onShowPassword = () => setShowPasswords((prev) => !prev);
 
   return (
     <main>
-      <form aria-label="Register form">
+      <form aria-label="Register form" onSubmit={handleSubmit}>
         <FormInput
+          disabled={loading}
           name="username"
           value={username}
           onChange={(e) => {
@@ -40,6 +68,7 @@ function RegisterForm() {
           required
         />
         <FormInput
+          disabled={loading}
           type="password"
           name="password"
           value={password}
@@ -47,7 +76,7 @@ function RegisterForm() {
             setPassword(e.target.value);
             validatePassword(e, setErrors, "password");
           }}
-          error={!passwordsMatch ? "Passwords don't match" : errors?.password}
+          error={errors?.password}
           label={
             <>
               <img src="/assets/icons/lock.svg" alt="" aria-hidden />{" "}
@@ -60,10 +89,16 @@ function RegisterForm() {
           required
         />
         <FormInput
+          disabled={loading}
           type="password"
           name="password_confirmation"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
+          value={password_confirmation}
+          onChange={(e) => setPassword_confirmation(e.target.value)}
+          error={
+            !passwordsMatch
+              ? "Passwords don't match"
+              : errors?.password_confirmation
+          }
           label={
             <>
               <img src="/assets/icons/check-mark.svg" alt="" aria-hidden />{" "}
@@ -78,6 +113,7 @@ function RegisterForm() {
         {/* Show passwords checkbox */}
         <div>
           <input
+            disabled={loading}
             type="checkbox"
             id="show-passwords-toggle"
             checked={showPasswords}
@@ -86,7 +122,11 @@ function RegisterForm() {
           <label htmlFor="show-passwords-toggle">Show passwords</label>
         </div>
         {/* Submit */}
-        <button type="submit" data-testid="submit-button">
+        <button
+          type="submit"
+          data-testid="submit-button"
+          disabled={loading || !passwordsMatch}
+        >
           <span>Register</span>
           <img src="/assets/icons/arrow.svg" alt="" aria-hidden />
         </button>
@@ -97,8 +137,8 @@ function RegisterForm() {
       </div>
       {/* OAuth buttons */}
       <div>
-        <GoogleLoginButton />
-        <GithubLoginButton />
+        <GoogleLoginButton disabled={loading} />
+        <GithubLoginButton disabled={loading} />
       </div>
     </main>
   );

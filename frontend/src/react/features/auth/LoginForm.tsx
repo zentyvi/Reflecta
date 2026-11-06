@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { ErrorsObject } from "../../../../../types/ErrorObjects.d.ts";
+import type { ErrorsObject } from "@shared/ErrorObjects.d.ts";
 import api from "../../../api/index.ts";
 import FormInput from "../../components/FormInput.tsx";
 import useAuth from "../../contexts/AuthProvider.tsx";
@@ -18,10 +18,8 @@ function LoginForm() {
     try {
       e.preventDefault();
       setLoading(true);
-      const result = await api.auth.login({
-        username: username.toLocaleLowerCase(),
-        password,
-      });
+      const data = { username: username.toLowerCase(), password };
+      const result = await api.auth.login(data);
 
       if (!result.success) {
         setErrors(result.errors);
@@ -31,6 +29,8 @@ function LoginForm() {
       login(result.token);
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 

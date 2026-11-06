@@ -48,4 +48,13 @@ describe("Github OAuth button", () => {
     });
     expect(loginButton.className).includes("test-class");
   });
+
+  it("accepts a 'disabled' prop properly", () => {
+    render(<GithubLoginButton disabled={true} />);
+
+    const loginButton = screen.getByRole<HTMLButtonElement>("button", {
+      name: /login via github/i,
+    });
+    expect(loginButton.disabled).toBeTruthy();
+  });
 });
