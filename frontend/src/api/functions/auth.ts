@@ -2,7 +2,7 @@ import type {
   AuthResponseBody,
   LoginRequestBody,
   SignUpRequestBody,
-} from "../../../../types/api/auth.d.ts";
+} from "@shared/api/auth.d.ts";
 import { apiUrl } from "../apiClient.ts";
 
 const authUrl = `${apiUrl}/auth`;

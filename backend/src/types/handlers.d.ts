@@ -6,29 +6,13 @@ import type {
   LoginRequestBody,
   OAuthResponseBody,
   SignUpRequestBody,
-} from "../../../types/api/auth.d.ts";
+} from "@shared/api/auth.d.ts";
 
 // Auth handlers
 
-export type SignUpHandler = RequestHandler<
-  {},
-  AuthResponseBody,
-  SignUpRequestBody
->;
-export type LoginHandler = RequestHandler<
-  {},
-  AuthResponseBody,
-  LoginRequestBody
->;
+export type SignUpHandler = RequestHandler<{}, AuthResponseBody>;
+export type LoginHandler = RequestHandler<{}, AuthResponseBody>;
 
-export type GoogleLoginHanlder = RequestHandler<
-  {},
-  OAuthResponseBody,
-  GoogleLoginRequestBody
->;
+export type GoogleLoginHanlder = RequestHandler<{}, OAuthResponseBody>;
 
-export type GithubLoginHandler = RequestHandler<
-  {},
-  OAuthResponseBody,
-  GithybLoginRequestBody
->;
+export type GithubLoginHandler = RequestHandler<{}, OAuthResponseBody>;

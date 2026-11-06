@@ -12,7 +12,10 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["node", "cors", "express"]
+    "types": ["node", "cors", "express"],
+    "paths": {
+      "@shared/*": ["../types/*"]
+    }
   },
   "include": ["src/**/*.ts"]
 }
