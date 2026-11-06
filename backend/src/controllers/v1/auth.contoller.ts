@@ -1,9 +1,15 @@
 import bcrypt from "bcryptjs";
-import type { Handler } from "express";
+import type { Handler, RequestHandler } from "express";
 import { validationResult } from "express-validator";
 import { OAuth2Client } from "google-auth-library";
-import validateSignUp from "../../middlewares/validators/validateSignUp.ts";
+import validateSignUp from "../../middlewares/validators/validateSignUp.middleware.ts";
 import { db } from "../../prisma/db.ts";
+import type {
+  GithubLoginHandler,
+  GoogleLoginHanlder,
+  LoginHandler,
+  SignUpHandler,
+} from "../../types/handlers";
 import {
   createJWT,
   generateDefaultUsername,
@@ -13,11 +19,11 @@ import {
 const GOOGLE_CLIENT_ID = getFromEnv("GOOGLE_CLIENT_ID");
 const google_client = new OAuth2Client(GOOGLE_CLIENT_ID);
 
-const _signUp: Handler = async (req, res, next) => {
+const _signUp: SignUpHandler = async (req, res, next) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.mapped() });
+      return res.status(400).json({ errors: errors.mapped(), success: false });
     }
     const { username, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -33,7 +39,7 @@ const _signUp: Handler = async (req, res, next) => {
 
     const token = createJWT(user);
 
-    res.status(201).json({ token });
+    res.status(201).json({ token, success: true });
   } catch (err) {
     next(err);
   }
@@ -41,7 +47,7 @@ const _signUp: Handler = async (req, res, next) => {
 
 const signUp = [validateSignUp, _signUp];
 
-const login: Handler = async (req, res, next) => {
+const login: LoginHandler = async (req, res, next) => {
   try {
     const { username, password } = req.body;
     const user = await db.orm.users
@@ -49,9 +55,10 @@ const login: Handler = async (req, res, next) => {
       .first();
 
     if (!user) {
-      return res
-        .status(404)
-        .json({ errors: { username: { msg: "User doesn't exist" } } });
+      return res.status(404).json({
+        errors: { username: { msg: "User doesn't exist" } },
+        success: false,
+      });
     }
 
     if (user.userType !== "USERNAME") {
@@ -61,14 +68,16 @@ const login: Handler = async (req, res, next) => {
             msg: "You've used another method to login (Google or Github)",
           },
         },
+        success: false,
       });
     }
 
     const passwrodMatch = await bcrypt.compare(password, user?.password ?? "");
     if (!passwrodMatch) {
-      return res
-        .status(400)
-        .json({ errors: { password: { msg: "Incorrect password" } } });
+      return res.status(400).json({
+        errors: { password: { msg: "Incorrect password" } },
+        success: false,
+      });
     }
 
     const payload = {
@@ -79,19 +88,20 @@ const login: Handler = async (req, res, next) => {
     };
     const token = createJWT(payload);
 
-    res.status(200).json({ token });
+    res.status(200).json({ token, success: true });
   } catch (err) {
     next(err);
   }
 };
 
-const googleLogin: Handler = async (req, res, next) => {
+const googleLogin: GoogleLoginHanlder = async (req, res, next) => {
   try {
-    const { token: googleToken } = req.body;
+    const { googleToken } = req.body;
     if (!googleToken) {
-      return res
-        .status(400)
-        .json({ message: "Authorization google id is required" });
+      return res.status(400).json({
+        message: "Authorization google id is required",
+        success: false,
+      });
     }
 
     const ticket = await google_client.verifyIdToken({
@@ -111,19 +121,19 @@ const googleLogin: Handler = async (req, res, next) => {
 
     const token = createJWT(user);
 
-    res.status(200).json({ token });
+    res.status(200).json({ token, success: true });
   } catch (err) {
     next(err);
   }
 };
 
-const githubLogin: Handler = async (req, res, next) => {
+const githubLogin: GithubLoginHandler = async (req, res, next) => {
   try {
     const { code } = req.body;
     if (!code) {
       return res
         .status(400)
-        .json({ message: "Authorization code is required" });
+        .json({ message: "Authorization code is required", success: false });
     }
 
     const tokenResponse = await fetch(
@@ -170,7 +180,7 @@ const githubLogin: Handler = async (req, res, next) => {
 
     const token = createJWT(user);
 
-    res.status(200).json({ token });
+    res.status(200).json({ token, success: true });
   } catch (err) {
     next(err);
   }

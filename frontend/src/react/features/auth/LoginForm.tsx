@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { ErrorsObject } from "../../../@types/ErrorObjects";
+import type { ErrorsObject } from "../../../../../types/ErrorObjects.d.ts";
 import api from "../../../api/index.ts";
 import FormInput from "../../components/FormInput.tsx";
 import useAuth from "../../contexts/AuthProvider.tsx";

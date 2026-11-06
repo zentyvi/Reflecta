@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { ErrorsObject } from "../../../@types/ErrorObjects";
+import type { ErrorsObject } from "../../../../../types/ErrorObjects.d.ts";
 import FormInput from "../../components/FormInput.tsx";
 import { validatePassword, validateUsername } from "../../utils/validators.ts";
 import GithubLoginButton from "./OAuth_buttons/GithubLogInButton.tsx";

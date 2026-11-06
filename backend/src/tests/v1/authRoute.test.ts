@@ -42,6 +42,7 @@ describe("Auth Controller Integration Tests", () => {
 
       // Verify that response body contains the JWT token
       expect(response.body).toHaveProperty("token");
+      expect(response.body.success).toBeTruthy();
       expect(typeof response.body.token).toBe("string");
     });
 
@@ -53,6 +54,7 @@ describe("Auth Controller Integration Tests", () => {
 
       // Ensure validation error object is returned in response
       expect(response.body).toHaveProperty("errors");
+      expect(response.body.success).toBeFalsy();
     });
   });
 
@@ -66,6 +68,7 @@ describe("Auth Controller Integration Tests", () => {
 
       // Ensure token is returned upon successful authentication
       expect(response.body).toHaveProperty("token");
+      expect(response.body.success).toBeTruthy();
     });
 
     it("should return 400 Bad Request when password does not match", async () => {
@@ -78,6 +81,7 @@ describe("Auth Controller Integration Tests", () => {
       // Verify error response
       expect(response.status).toBe(400);
       expect(response.body.errors).toHaveProperty("password");
+      expect(response.body.success).toBeFalsy();
     });
   });
 
@@ -95,6 +99,7 @@ describe("Auth Controller Integration Tests", () => {
 
     expect(response.status).toBe(400);
     expect(response.body.errors).toHaveProperty("password");
+    expect(response.body.success).toBeFalsy();
 
     await db.orm.users.where({ username: mockedGoogleUsername }).delete();
   });
@@ -109,12 +114,13 @@ describe("Google Login Integration Test", () => {
     // Send request with a fake Google ID token
     const response = await request(app)
       .post("/api/v1/auth/google") // Adjust route path to your app
-      .send({ token: "fake_google_id_token" });
+      .send({ googleToken: "fake_google_id_token" });
 
     expect(response.status).toBe(200);
 
     // Ensure JWT token is returned
     expect(response.body).toHaveProperty("token");
+    expect(response.body.success).toBeTruthy();
   });
 
   it("should return 400 if Google token is missing", async () => {
@@ -124,6 +130,7 @@ describe("Google Login Integration Test", () => {
     // Expect bad request error
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty("message");
+    expect(response.body.success).toBeFalsy();
   });
 });
 
@@ -165,6 +172,7 @@ describe("GitHub Login Integration Test", () => {
     // Verify response
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("token");
+    expect(response.body.success).toBeTruthy();
 
     // Restore original fetch after test
     fetchSpy.mockRestore();
@@ -175,5 +183,6 @@ describe("GitHub Login Integration Test", () => {
 
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty("message");
+    expect(response.body.success).toBeFalsy();
   });
 });

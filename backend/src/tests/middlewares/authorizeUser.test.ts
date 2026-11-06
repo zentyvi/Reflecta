@@ -1,6 +1,6 @@
 // @ts-ignore
 import { describe, expect, it, vi } from "vitest";
-import authorizeUser from "../../middlewares/auth/authorizeUser.ts";
+import authorizeUser from "../../middlewares/auth/authorizeUser.middleware.ts";
 
 vi.mock("jsonwebtoken", () => {
   return {

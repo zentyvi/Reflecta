@@ -1,4 +1,4 @@
-import type { ErrorsObject } from "../../@types/ErrorObjects";
+import type { ErrorsObject } from "../../../../types/ErrorObjects.d.ts";
 
 type Validator = (
   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,

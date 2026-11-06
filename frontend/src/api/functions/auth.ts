@@ -1,15 +1,13 @@
-import type { authResponse } from "../../@types/api/auth";
+import type {
+  AuthResponseBody,
+  LoginRequestBody,
+  SignUpRequestBody,
+} from "../../../../types/api/auth.d.ts";
 import { apiUrl } from "../apiClient.ts";
 
 const authUrl = `${apiUrl}/auth`;
 
-type signUpData = {
-  username: string;
-  password: string;
-  password_confirmation: string;
-};
-
-async function signUp(data: signUpData) {
+async function signUp(data: SignUpRequestBody) {
   const response = await fetch(`${authUrl}/sign-up`, {
     method: "POST",
     body: JSON.stringify(data),
@@ -21,16 +19,11 @@ async function signUp(data: signUpData) {
     );
   }
 
-  const result: authResponse = await response.json();
+  const result: AuthResponseBody = await response.json();
   return result;
 }
 
-type loginData = {
-  username: string;
-  password: string;
-};
-
-async function login(data: loginData) {
+async function login(data: LoginRequestBody) {
   const response = await fetch(`${authUrl}/login`, {
     method: "POST",
     body: JSON.stringify(data),
@@ -42,14 +35,14 @@ async function login(data: loginData) {
     );
   }
 
-  const result: authResponse = await response.json();
+  const result: AuthResponseBody = await response.json();
   return result;
 }
 
 async function googleLogin(googleToken: string) {
   const response = await fetch(`${authUrl}/google`, {
     method: "POST",
-    body: JSON.stringify({ token: googleToken }),
+    body: JSON.stringify({ googleToken }),
   });
 
   if (!response.ok) {
@@ -58,14 +51,14 @@ async function googleLogin(googleToken: string) {
     );
   }
 
-  const result: authResponse = await response.json();
+  const result: AuthResponseBody = await response.json();
   return result;
 }
 
-async function githubLogin(githubCode: string) {
+async function githubLogin(code: string) {
   const response = await fetch(`${authUrl}/github`, {
     method: "POST",
-    body: JSON.stringify({ code: githubCode }),
+    body: JSON.stringify({ code }),
   });
 
   if (!response.ok) {
@@ -74,7 +67,7 @@ async function githubLogin(githubCode: string) {
     );
   }
 
-  const result: authResponse = await response.json();
+  const result: AuthResponseBody = await response.json();
   return result;
 }
 

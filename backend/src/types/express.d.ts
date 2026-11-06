@@ -1,3 +1,4 @@
+import type { Handler } from "express";
 import type { JwtUserPayload } from "./jwt";
 
 export {};

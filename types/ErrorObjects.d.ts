@@ -8,3 +8,4 @@ export type FieldErrors = {
 export type ErrorsObject = {
   [key: string]: FieldErrors | null;
 };
+

@@ -1,6 +1,6 @@
 import type { Handler } from "express";
 import jwt from "jsonwebtoken";
-import type { JwtUserPayload } from "../../@types/jwt";
+import type { JwtUserPayload } from "../../types/jwt";
 import { getFromEnv } from "../../utils/helpers.ts";
 
 const authorizeUser: Handler = (req, res, next) => {

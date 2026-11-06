@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import protectRoute from "../../middlewares/auth/protectRoute.ts";
+import protectRoute from "../../middlewares/auth/protectRoute.middleware.ts";
 
 describe("Protect route middleware", () => {
   it("should return 403 Forbidden when req.user is null", () => {
