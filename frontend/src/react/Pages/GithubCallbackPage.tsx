@@ -8,13 +8,14 @@ const styles = {} as CSSModuleClasses;
 function GithubCallbackPage() {
   const [params] = useSearchParams();
   const code = params.get("code");
-  const [loading, setLoading] = useState(Boolean(code));
+  const [state, setState] = useState<"loading" | "error">("loading");
   const { login } = useAuth();
 
   // useTitle(loading ? "Authenticating..." : "Authentication Error");
 
   useEffect(() => {
     if (!code) {
+      setState("error");
       return;
     }
 
@@ -23,11 +24,9 @@ function GithubCallbackPage() {
         const result = await api.auth.githubLogin(code);
         if (result?.success) {
           login(result.token);
-        } else {
-          setLoading(false);
         }
       } catch (err) {
-        setLoading(false);
+        setState("error");
         console.error(`[Github login failed] - ${err}`);
       }
     };
@@ -43,23 +42,26 @@ function GithubCallbackPage() {
             className={`bi bi-exclamation-triangle ${styles["auth-redirect__icon"]}`}
             aria-hidden="true"
           />
-          <h2 className={styles["auth-redirect__title"]}>
-            An error has occurred
-          </h2>
-          <p className={styles["auth-redirect__description"]}>
-            The provided GitHub authorization code is invalid or expired. Please
-            try logging in again.
-          </p>
+          <h1 className={styles["auth-redirect__title"]}>
+            {state === "loading" ? "Authenticating..." : "Error has occurred"}
+          </h1>
+          {state === "error" && (
+            <p className={styles["auth-redirect__description"]}>
+              The provided GitHub authorization code is invalid or expired.
+              Please try logging in again.
+            </p>
+          )}
         </div>
-
-        <div className={styles["auth-redirect__actions"]}>
-          <Link to="/auth/login" className="btn btn--primary">
-            Login
-          </Link>
-          <Link to="/auth/register" className="btn btn--secondary">
-            Register
-          </Link>
-        </div>
+        {state === "error" && (
+          <div className={styles["auth-redirect__actions"]}>
+            <Link to="/auth/login" className="btn btn--primary">
+              Login
+            </Link>
+            <Link to="/auth/register" className="btn btn--secondary">
+              Register
+            </Link>
+          </div>
+        )}
       </div>
     </main>
   );
