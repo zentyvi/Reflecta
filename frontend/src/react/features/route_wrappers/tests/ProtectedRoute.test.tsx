@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { createMemoryRouter, RouterProvider } from "react-router";
 import { describe, expect, it } from "vitest";
+import links from "../../../config/navigation_links.tsx";
 import useAuth from "../../../contexts/AuthProvider.tsx";
 import ProtectedRoute from "../ProtectedRoute.tsx";
 
@@ -19,7 +20,7 @@ const router = createMemoryRouter(
       ],
     },
     {
-      path: "/auth/login",
+      path: links.auth.login,
       element: <h1>login</h1>,
     },
   ],
@@ -37,7 +38,7 @@ describe("Protected route wrapper", () => {
     expect(heading).toBeInTheDocument();
   });
 
-  it("Navigates a user to '/auth/login' if isn't authenticated", () => {
+  it("Navigates a user to the path from links.auth.login if isn't authenticated", () => {
     vi.mocked(useAuth).mockReturnValue({ isAuthenticated: false } as any);
 
     render(<RouterProvider router={router} />);
