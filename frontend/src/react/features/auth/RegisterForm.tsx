@@ -60,7 +60,7 @@ function RegisterForm() {
           error={errors?.username}
           label={
             <>
-              <img src="/assets/icons/user.svg" alt="" aria-hidden />{" "}
+              <i className="bi bi-person-fill" aria-hidden />
               <span>Username</span>
             </>
           }
@@ -79,7 +79,7 @@ function RegisterForm() {
           error={errors?.password}
           label={
             <>
-              <img src="/assets/icons/lock.svg" alt="" aria-hidden />{" "}
+              <i className="bi bi-lock-fill" aria-hidden />
               <span>Password</span>
             </>
           }
@@ -101,7 +101,7 @@ function RegisterForm() {
           }
           label={
             <>
-              <img src="/assets/icons/check-mark.svg" alt="" aria-hidden />{" "}
+              <i className="bi bi-check" aria-hidden />
               <span>Confirm password</span>
             </>
           }
@@ -128,7 +128,7 @@ function RegisterForm() {
           disabled={loading || !passwordsMatch}
         >
           <span>Register</span>
-          <img src="/assets/icons/arrow.svg" alt="" aria-hidden />
+          <i className="bi bi-arrow-right-short" aria-hidden />
         </button>
       </form>
       {/* Separator */}

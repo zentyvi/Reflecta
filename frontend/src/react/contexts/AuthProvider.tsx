@@ -1,6 +1,7 @@
 import { createContext, useContext, useState } from "react";
 
 type AuthContext = {
+  isAuthenticated: boolean;
   currentUser: object | null;
   setCurrentUser: React.Dispatch<React.SetStateAction<null | object>>;
   login: (token: string) => void;
@@ -13,13 +14,16 @@ const AuthContext = createContext<AuthContext | null>(null);
 
 export function AuthProvider({ children }: Props) {
   const [currentUser, setCurrentUser] = useState<null | object>(null);
+  const isAuthenticated = Boolean(localStorage.getItem("token"));
 
   const login = (token: string) => {
     localStorage.setItem("token", token);
   };
 
   return (
-    <AuthContext.Provider value={{ currentUser, setCurrentUser, login }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, currentUser, setCurrentUser, login }}
+    >
       {children}
     </AuthContext.Provider>
   );

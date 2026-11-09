@@ -1,9 +1,13 @@
 import { createBrowserRouter, Navigate } from "react-router";
 import App from "./App.tsx";
-import AuthPage from "./Pages/AuthPage.tsx";
+import links from "./config/navigation_links.tsx";
+
 import LoginForm from "./features/auth/LoginForm.tsx";
 import RegisterForm from "./features/auth/RegisterForm.tsx";
-import GithubCallbackPage from "./Pages/GithubCallbackPage.tsx";
+import GuestRoute from "./features/route_wrappers/GuestRoute.tsx";
+
+import AuthPage from "./pages/AuthPage.tsx";
+import GithubCallbackPage from "./pages/GithubCallbackPage.tsx";
 
 const siteRouter = createBrowserRouter([
   {
@@ -11,15 +15,23 @@ const siteRouter = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: "/auth",
-        element: <AuthPage />,
+        element: <GuestRoute />,
         children: [
-          { index: true, element: <Navigate to={"/auth/login"} replace /> },
-          { path: "/auth/login", element: <LoginForm /> },
-          { path: "/auth/register", element: <RegisterForm /> },
+          {
+            path: links.auth.path,
+            element: <AuthPage />,
+            children: [
+              {
+                index: true,
+                element: <Navigate to={links.auth.login} replace />,
+              },
+              { path: links.auth.login, element: <LoginForm /> },
+              { path: links.auth.register, element: <RegisterForm /> },
+            ],
+          },
+          { path: links.auth.githubCallback, element: <GithubCallbackPage /> },
         ],
       },
-      { path: "/auth/github", element: <GithubCallbackPage /> },
     ],
   },
 ]);

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router";
 import useAuth from "../contexts/AuthProvider.js";
 import api from "../../api/index.js";
+import links from "../config/navigation_links.js";
 
 const styles = {} as CSSModuleClasses;
 
@@ -54,10 +55,10 @@ function GithubCallbackPage() {
         </div>
         {state === "error" && (
           <div className={styles["auth-redirect__actions"]}>
-            <Link to="/auth/login" className="btn btn--primary">
+            <Link to={links.auth.login} className="btn btn--primary">
               Login
             </Link>
-            <Link to="/auth/register" className="btn btn--secondary">
+            <Link to={links.auth.register} className="btn btn--secondary">
               Register
             </Link>
           </div>

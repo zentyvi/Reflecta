@@ -1,16 +1,17 @@
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Link, Outlet, useLocation } from "react-router";
+import links from "../config/navigation_links.tsx";
 
 function AuthPage() {
   const { pathname } = useLocation();
   const isLoginPage = pathname.includes("login");
   const subTitle = isLoginPage ? (
     <>
-      Sign in your account, or <Link to="/auth/register">create one</Link>.
+      Sign in your account, or <Link to={links.auth.login}>create one</Link>.
     </>
   ) : (
     <>
-      Create an account, or <Link to="/auth/login">login</Link>.
+      Create an account, or <Link to={links.auth.register}>login</Link>.
     </>
   );
 
@@ -25,7 +26,7 @@ function AuthPage() {
           <nav>
             <ul>
               <li>
-                <Link to={isLoginPage ? "/auth/register" : "/auth/login"}>
+                <Link to={isLoginPage ? links.auth.register : links.auth.login}>
                   {isLoginPage ? "Register" : "Login"}
                 </Link>
               </li>

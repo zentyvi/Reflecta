@@ -1,3 +1,5 @@
+import links from "../../../config/navigation_links.tsx";
+
 const styles = {} as CSSModuleClasses;
 
 type Props = {
@@ -8,7 +10,7 @@ type Props = {
 function GithubLoginButton({ className = "", disabled = false }: Props) {
   const handleGithubLogin = () => {
     const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
-    const redirectUri = `${window.location.origin}/auth/github`;
+    const redirectUri = `${window.location.origin}${links.auth.githubCallback}`;
     const githubUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(
       redirectUri,
     )}&scope=read:user user:email`;

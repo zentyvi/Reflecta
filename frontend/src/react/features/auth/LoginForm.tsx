@@ -45,7 +45,7 @@ function LoginForm() {
           error={errors?.username}
           label={
             <>
-              <img src="/assets/icons/user.svg" alt="" aria-hidden />{" "}
+              <i className="bi bi-person-fill" aria-hidden />
               <span>Username</span>
             </>
           }
@@ -61,7 +61,7 @@ function LoginForm() {
           error={errors?.password}
           label={
             <>
-              <img src="/assets/icons/lock.svg" alt="" aria-hidden />{" "}
+              <i className="bi bi-lock-fill" aria-hidden />
               <span>Password</span>
             </>
           }
@@ -74,7 +74,7 @@ function LoginForm() {
         {/* Submit */}
         <button type="submit" data-testid="submit-button" disabled={loading}>
           <span>Login</span>
-          <img src="/assets/icons/arrow.svg" alt="" aria-hidden />
+          <i className="bi bi-arrow-right-short" aria-hidden />
         </button>
       </form>
       {/* Separator */}
