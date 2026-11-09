@@ -29,7 +29,7 @@ const router = createMemoryRouter(
 describe("Guest route wrapper", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("Passes a user thorugh if isn't authenticated", () => {
+  it("passes a user thorugh if isn't authenticated", () => {
     vi.mocked(useAuth).mockReturnValue({ isAuthenticated: false } as any);
 
     render(<RouterProvider router={router} />);
@@ -37,7 +37,7 @@ describe("Guest route wrapper", () => {
     expect(heading).toBeInTheDocument();
   });
 
-  it("Navigates a user to '/' if is authenticated", () => {
+  it("navigates a user to '/' if is authenticated", () => {
     vi.mocked(useAuth).mockReturnValue({ isAuthenticated: true } as any);
 
     render(<RouterProvider router={router} />);

@@ -1,11 +1,12 @@
-import { useState } from "react";
 import type { ErrorsObject } from "@shared/ErrorObjects.d.ts";
+import { useState } from "react";
+import api from "../../../api/index.ts";
 import FormInput from "../../components/FormInput.tsx";
+import useAuth from "../../contexts/AuthProvider.tsx";
+import { useTitle } from "../../utils/hooks.tsx";
 import { validatePassword, validateUsername } from "../../utils/validators.ts";
 import GithubLoginButton from "./OAuth_buttons/GithubLogInButton.tsx";
 import GoogleLoginButton from "./OAuth_buttons/GoogleLogInButton.tsx";
-import useAuth from "../../contexts/AuthProvider.tsx";
-import api from "../../../api/index.ts";
 
 function RegisterForm() {
   const [showPasswords, setShowPasswords] = useState(false);
@@ -15,6 +16,8 @@ function RegisterForm() {
   const [password, setPassword] = useState("");
   const [password_confirmation, setPassword_confirmation] = useState("");
   const { login } = useAuth();
+
+  useTitle("Register");
 
   const handleSubmit: React.SubmitEventHandler = async (e) => {
     try {

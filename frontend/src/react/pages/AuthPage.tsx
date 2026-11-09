@@ -52,9 +52,6 @@ function AuthPage() {
       </div>
       {/* Banner */}
       <aside>
-        {/* Decor */}
-        <img src="/assets/decor/lighting.png" alt="" aria-hidden />
-        <img src="/assets/decor/spiral.svg" alt="" aria-hidden />
         {/* Banner's text */}
         <div>
           <h2>Reflecta</h2>

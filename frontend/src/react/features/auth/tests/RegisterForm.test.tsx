@@ -22,6 +22,7 @@ describe("Register form", () => {
     const submitButton = screen.getByTestId("submit-button");
     expect(form).toBeInTheDocument();
     expect(submitButton).toBeInTheDocument();
+    expect(document.title).includes("Register");
   });
 
   it("renders 2 OAuth buttons", () => {

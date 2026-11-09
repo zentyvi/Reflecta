@@ -1,8 +1,9 @@
-import { useState } from "react";
 import type { ErrorsObject } from "@shared/ErrorObjects.d.ts";
+import { useState } from "react";
 import api from "../../../api/index.ts";
 import FormInput from "../../components/FormInput.tsx";
 import useAuth from "../../contexts/AuthProvider.tsx";
+import { useTitle } from "../../utils/hooks.tsx";
 import GithubLoginButton from "./OAuth_buttons/GithubLogInButton.tsx";
 import GoogleLoginButton from "./OAuth_buttons/GoogleLogInButton.tsx";
 
@@ -13,6 +14,8 @@ function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const { login } = useAuth();
+
+  useTitle("Login");
 
   const handleLogin: React.SubmitEventHandler = async (e) => {
     try {

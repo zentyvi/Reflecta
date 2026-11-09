@@ -25,6 +25,7 @@ describe("Github callback page", () => {
     render(<GithubCallbackPage />);
     const heading = screen.getByRole("heading", { name: /Authenticating.../i });
     expect(heading).toBeInTheDocument();
+    expect(document.title).include("Authenticating...");
   });
 
   it("renders error if no code was provided", () => {
@@ -35,6 +36,7 @@ describe("Github callback page", () => {
       name: /Error has occurred/i,
     });
     expect(errorHeading).toBeInTheDocument();
+    expect(document.title).include("Authentication Error");
   });
 
   it("calls api function", () => {

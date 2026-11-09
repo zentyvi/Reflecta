@@ -8,6 +8,8 @@ import GuestRoute from "./features/route_wrappers/GuestRoute.tsx";
 
 import AuthPage from "./pages/AuthPage.tsx";
 import GithubCallbackPage from "./pages/GithubCallbackPage.tsx";
+import ProtectedRoute from "./features/route_wrappers/ProtectedRoute.tsx";
+import AppLayout from "./pages/AppLayout.tsx";
 
 const siteRouter = createBrowserRouter([
   {
@@ -30,6 +32,16 @@ const siteRouter = createBrowserRouter([
             ],
           },
           { path: links.auth.githubCallback, element: <GithubCallbackPage /> },
+        ],
+      },
+      {
+        element: <ProtectedRoute />,
+        children: [
+          {
+            path: "/",
+            element: <AppLayout />,
+            children: [],
+          },
         ],
       },
     ],

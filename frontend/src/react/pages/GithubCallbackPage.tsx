@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { useSearchParams, Link } from "react-router";
-import useAuth from "../contexts/AuthProvider.js";
+import { Link, useSearchParams } from "react-router";
 import api from "../../api/index.js";
 import links from "../config/navigation_links.js";
+import useAuth from "../contexts/AuthProvider.js";
+import { useTitle } from "../utils/hooks.js";
 
 const styles = {} as CSSModuleClasses;
 
@@ -12,7 +13,7 @@ function GithubCallbackPage() {
   const [state, setState] = useState<"loading" | "error">("loading");
   const { login } = useAuth();
 
-  // useTitle(loading ? "Authenticating..." : "Authentication Error");
+  useTitle(state === "loading" ? "Authenticating..." : "Authentication Error");
 
   useEffect(() => {
     if (!code) {
