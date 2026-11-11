@@ -39,14 +39,15 @@ class HttpClient {
   }
 
   #getContentType(body: FetchOptions["body"]) {
-    const isFormData = body instanceof FormData;
-    const contentType = isFormData
-      ? ""
-      : typeof body !== "undefined"
-        ? "application/json"
-        : "";
+    if (body instanceof FormData) {
+      return undefined;
+    }
 
-    return contentType;
+    if (typeof body !== "undefined") {
+      return "application/json";
+    }
+
+    return undefined;
   }
 
   #getBody(body: FetchOptions["body"]) {
@@ -62,12 +63,19 @@ class HttpClient {
     const { authenticationRequired } = options;
     const authToken = authenticationRequired ? bearer : "";
     const contentType = this.#getContentType(options.body);
-    return {
-      Authorization: authToken,
-      "Content-type": contentType,
-    };
-  }
 
+    const headers: Record<string, string> = {};
+
+    if (authToken) {
+      headers["Authorization"] = authToken;
+    }
+
+    if (contentType) {
+      headers["Content-type"] = contentType;
+    }
+
+    return headers;
+  }
   #checkAuthentication(options: FetchOptions) {
     if (options.authenticationRequired && !token) {
       throw new Error("No token found, this request requires authentication");

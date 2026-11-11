@@ -39,13 +39,13 @@ async function login(data: LoginRequestBody) {
 
 async function googleLogin(googleToken: string) {
   try {
-    const result = await httpClient.post<string, AuthResponseBody>(
-      "/auth/google",
-      {
-        ignore400: true,
-        body: googleToken,
-      },
-    );
+    const result = await httpClient.post<
+      { googleToken: string },
+      AuthResponseBody
+    >("/auth/google", {
+      ignore400: true,
+      body: { googleToken },
+    });
     return result;
   } catch (err) {
     const message = err instanceof Error ? err.message : "";
@@ -55,11 +55,11 @@ async function googleLogin(googleToken: string) {
 
 async function githubLogin(code: string) {
   try {
-    const result = await httpClient.post<string, AuthResponseBody>(
+    const result = await httpClient.post<{ code: string }, AuthResponseBody>(
       "/auth/github",
       {
         ignore400: true,
-        body: code,
+        body: { code },
       },
     );
     return result;
