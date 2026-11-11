@@ -26,5 +26,5 @@
       "@shared/*": ["../shared_types/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "src/api/inner/config.ts"]
 }

@@ -3,84 +3,70 @@ import type {
   LoginRequestBody,
   SignUpRequestBody,
 } from "@shared/api/auth.d.ts";
-import { apiUrl } from "../apiClient.ts";
-
-const authUrl = `${apiUrl}/auth`;
+import httpClient from "../inner/httpClient.ts";
 
 async function signUp(data: SignUpRequestBody) {
-  const response = await fetch(`${authUrl}/sign-up`, {
-    method: "POST",
-    body: JSON.stringify(data),
-    headers: {
-      "Content-type": "application/json",
-    },
-  });
-
-  if (!response.ok && response.status !== 400) {
-    throw new Error(
-      `Failed to create an account - [status code: ${response.status}]`,
+  try {
+    const result = await httpClient.post<SignUpRequestBody, AuthResponseBody>(
+      "/auth/sign-up",
+      {
+        ignore400: true,
+        body: data,
+      },
     );
+    return result;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "";
+    console.error(`[Failed to sign up] ${message}`);
   }
-
-  const result: AuthResponseBody = await response.json();
-  return result;
 }
 
 async function login(data: LoginRequestBody) {
-  const response = await fetch(`${authUrl}/login`, {
-    method: "POST",
-    body: JSON.stringify(data),
-    headers: {
-      "Content-type": "application/json",
-    },
-  });
-
-  if (!response.ok && response.status !== 400) {
-    throw new Error(
-      `Failed to login into an account - [status code: ${response.status}]`,
+  try {
+    const result = await httpClient.post<LoginRequestBody, AuthResponseBody>(
+      "/auth/login",
+      {
+        ignore400: true,
+        body: data,
+      },
     );
+    return result;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "";
+    console.error(`[Failed to login] ${message}`);
   }
-
-  const result: AuthResponseBody = await response.json();
-  return result;
 }
 
 async function googleLogin(googleToken: string) {
-  const response = await fetch(`${authUrl}/google`, {
-    method: "POST",
-    body: JSON.stringify({ googleToken }),
-    headers: {
-      "Content-type": "application/json",
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(
-      `Failed to login via Google - [status code: ${response.status}]`,
+  try {
+    const result = await httpClient.post<string, AuthResponseBody>(
+      "/auth/google",
+      {
+        ignore400: true,
+        body: googleToken,
+      },
     );
+    return result;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "";
+    console.error(`[Failed to login via Google] ${message}`);
   }
-
-  const result: AuthResponseBody = await response.json();
-  return result;
 }
 
 async function githubLogin(code: string) {
-  const response = await fetch(`${authUrl}/github`, {
-    method: "POST",
-    body: JSON.stringify({ code }),
-    headers: {
-      "Content-type": "application/json",
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(
-      `Failed to login via Github - [status code: ${response.status}]`,
+  try {
+    const result = await httpClient.post<string, AuthResponseBody>(
+      "/auth/github",
+      {
+        ignore400: true,
+        body: code,
+      },
     );
+    return result;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "";
+    console.error(`[Failed to login via Github] ${message}`);
   }
-
-  const result: AuthResponseBody = await response.json();
-  return result;
 }
 
 const auth = {
