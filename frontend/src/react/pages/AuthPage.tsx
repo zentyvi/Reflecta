@@ -7,11 +7,11 @@ function AuthPage() {
   const isLoginPage = pathname.includes("login");
   const subTitle = isLoginPage ? (
     <>
-      Sign in your account, or <Link to={links.auth.login}>create one</Link>.
+      Sign in your account, or <Link to={links.auth.register}>create one</Link>.
     </>
   ) : (
     <>
-      Create an account, or <Link to={links.auth.register}>login</Link>.
+      Create an account, or <Link to={links.auth.login}>login</Link>.
     </>
   );
 
