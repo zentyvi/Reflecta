@@ -1,7 +1,7 @@
 import "dotenv/config";
 import express, { json, urlencoded } from "express";
 import authorizeUser from "../middlewares/auth/authorizeUser.middleware.ts";
-import api from "../routes/index.ts";
+import api from "../routes/api_index.ts";
 import { getFromEnv } from "../utils/helpers.ts";
 
 const app = express();

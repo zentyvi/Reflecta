@@ -1,0 +1,544 @@
+[
+  {
+    "id": "field.memories.events.unset",
+    "label": "Remove field events from collection memories",
+    "operationClass": "destructive",
+    "name": "field.memories.events.unset",
+    "precheck": [],
+    "run": [
+      {
+        "collection": "memories",
+        "command": {
+          "kind": "rawUpdateMany",
+          "collection": "memories",
+          "filter": {
+            "events": {
+              "$exists": true
+            }
+          },
+          "update": {
+            "$unset": {
+              "events": ""
+            }
+          },
+          "bypassDocumentValidation": true
+        },
+        "meta": {
+          "target": "mongo",
+          "storageHash": "",
+          "lane": "mongo-raw"
+        }
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "no document in memories holds events",
+        "source": {
+          "collection": "memories",
+          "command": {
+            "kind": "rawAggregate",
+            "collection": "memories",
+            "pipeline": [
+              {
+                "$match": {
+                  "events": {
+                    "$exists": true
+                  }
+                }
+              },
+              {
+                "$limit": 1
+              }
+            ]
+          },
+          "meta": {
+            "target": "mongo",
+            "storageHash": "",
+            "lane": "mongo-raw"
+          }
+        },
+        "filter": {
+          "kind": "exists",
+          "field": "_id",
+          "exists": true
+        },
+        "expect": "notExists"
+      }
+    ]
+  },
+  {
+    "id": "validator.events.update",
+    "label": "Update validator on events (added: memoryId)",
+    "operationClass": "widening",
+    "precheck": [
+      {
+        "description": "collection events exists",
+        "source": {
+          "kind": "listCollections"
+        },
+        "filter": {
+          "kind": "field",
+          "field": "name",
+          "op": "$eq",
+          "value": "events"
+        },
+        "expect": "exists",
+        "object": "collection \"events\""
+      }
+    ],
+    "execute": [
+      {
+        "description": "modify events",
+        "command": {
+          "kind": "collMod",
+          "collection": "events",
+          "validator": {
+            "$jsonSchema": {
+              "additionalProperties": false,
+              "bsonType": "object",
+              "properties": {
+                "_id": {
+                  "bsonType": "objectId"
+                },
+                "memoryId": {
+                  "bsonType": "objectId"
+                },
+                "rating": {
+                  "bsonType": [
+                    "null",
+                    "int"
+                  ]
+                },
+                "title": {
+                  "bsonType": "string"
+                }
+              },
+              "required": [
+                "_id",
+                "memoryId",
+                "title"
+              ]
+            }
+          },
+          "validationLevel": "strict",
+          "validationAction": "error"
+        }
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "validator applied on events",
+        "source": {
+          "kind": "listCollections"
+        },
+        "filter": {
+          "kind": "and",
+          "exprs": [
+            {
+              "kind": "field",
+              "field": "name",
+              "op": "$eq",
+              "value": "events"
+            },
+            {
+              "kind": "field",
+              "field": "options.validationLevel",
+              "op": "$eq",
+              "value": "strict"
+            },
+            {
+              "kind": "field",
+              "field": "options.validationAction",
+              "op": "$eq",
+              "value": "error"
+            },
+            {
+              "kind": "field",
+              "field": "options.validator.$jsonSchema",
+              "op": "$eq",
+              "value": {
+                "additionalProperties": false,
+                "bsonType": "object",
+                "properties": {
+                  "_id": {
+                    "bsonType": "objectId"
+                  },
+                  "memoryId": {
+                    "bsonType": "objectId"
+                  },
+                  "rating": {
+                    "bsonType": [
+                      "null",
+                      "int"
+                    ]
+                  },
+                  "title": {
+                    "bsonType": "string"
+                  }
+                },
+                "required": [
+                  "_id",
+                  "memoryId",
+                  "title"
+                ]
+              }
+            }
+          ]
+        },
+        "expect": "exists"
+      }
+    ]
+  },
+  {
+    "id": "validator.memories.update",
+    "label": "Update validator on memories (removed: events)",
+    "operationClass": "widening",
+    "precheck": [
+      {
+        "description": "collection memories exists",
+        "source": {
+          "kind": "listCollections"
+        },
+        "filter": {
+          "kind": "field",
+          "field": "name",
+          "op": "$eq",
+          "value": "memories"
+        },
+        "expect": "exists",
+        "object": "collection \"memories\""
+      }
+    ],
+    "execute": [
+      {
+        "description": "modify memories",
+        "command": {
+          "kind": "collMod",
+          "collection": "memories",
+          "validator": {
+            "$jsonSchema": {
+              "additionalProperties": false,
+              "bsonType": "object",
+              "properties": {
+                "_id": {
+                  "bsonType": "objectId"
+                },
+                "authorId": {
+                  "bsonType": "objectId"
+                },
+                "createdAt": {
+                  "bsonType": "date"
+                },
+                "date": {
+                  "bsonType": "date"
+                },
+                "note": {
+                  "bsonType": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "rating": {
+                  "bsonType": "int"
+                },
+                "title": {
+                  "bsonType": "string"
+                },
+                "updatedAt": {
+                  "bsonType": "date"
+                }
+              },
+              "required": [
+                "_id",
+                "authorId",
+                "createdAt",
+                "date",
+                "rating",
+                "title",
+                "updatedAt"
+              ]
+            }
+          },
+          "validationLevel": "strict",
+          "validationAction": "error"
+        }
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "validator applied on memories",
+        "source": {
+          "kind": "listCollections"
+        },
+        "filter": {
+          "kind": "and",
+          "exprs": [
+            {
+              "kind": "field",
+              "field": "name",
+              "op": "$eq",
+              "value": "memories"
+            },
+            {
+              "kind": "field",
+              "field": "options.validationLevel",
+              "op": "$eq",
+              "value": "strict"
+            },
+            {
+              "kind": "field",
+              "field": "options.validationAction",
+              "op": "$eq",
+              "value": "error"
+            },
+            {
+              "kind": "field",
+              "field": "options.validator.$jsonSchema",
+              "op": "$eq",
+              "value": {
+                "additionalProperties": false,
+                "bsonType": "object",
+                "properties": {
+                  "_id": {
+                    "bsonType": "objectId"
+                  },
+                  "authorId": {
+                    "bsonType": "objectId"
+                  },
+                  "createdAt": {
+                    "bsonType": "date"
+                  },
+                  "date": {
+                    "bsonType": "date"
+                  },
+                  "note": {
+                    "bsonType": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "rating": {
+                    "bsonType": "int"
+                  },
+                  "title": {
+                    "bsonType": "string"
+                  },
+                  "updatedAt": {
+                    "bsonType": "date"
+                  }
+                },
+                "required": [
+                  "_id",
+                  "authorId",
+                  "createdAt",
+                  "date",
+                  "rating",
+                  "title",
+                  "updatedAt"
+                ]
+              }
+            }
+          ]
+        },
+        "expect": "exists"
+      }
+    ]
+  },
+  {
+    "id": "validator.users.update",
+    "label": "Update validator on users (changed: password, userType; added: githubId, googleId, passwordVersion)",
+    "operationClass": "widening",
+    "precheck": [
+      {
+        "description": "collection users exists",
+        "source": {
+          "kind": "listCollections"
+        },
+        "filter": {
+          "kind": "field",
+          "field": "name",
+          "op": "$eq",
+          "value": "users"
+        },
+        "expect": "exists",
+        "object": "collection \"users\""
+      }
+    ],
+    "execute": [
+      {
+        "description": "modify users",
+        "command": {
+          "kind": "collMod",
+          "collection": "users",
+          "validator": {
+            "$jsonSchema": {
+              "additionalProperties": false,
+              "bsonType": "object",
+              "properties": {
+                "_id": {
+                  "bsonType": "objectId"
+                },
+                "createdAt": {
+                  "bsonType": "date"
+                },
+                "displayName": {
+                  "bsonType": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "githubId": {
+                  "bsonType": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "googleId": {
+                  "bsonType": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "password": {
+                  "bsonType": [
+                    "null",
+                    "string"
+                  ]
+                },
+                "passwordVersion": {
+                  "bsonType": [
+                    "null",
+                    "int"
+                  ]
+                },
+                "updatedAt": {
+                  "bsonType": "date"
+                },
+                "userType": {
+                  "bsonType": "string",
+                  "enum": [
+                    "GOOGLE",
+                    "USERNAME",
+                    "GITHUB"
+                  ]
+                },
+                "username": {
+                  "bsonType": "string"
+                }
+              },
+              "required": [
+                "_id",
+                "createdAt",
+                "updatedAt",
+                "userType",
+                "username"
+              ]
+            }
+          },
+          "validationLevel": "strict",
+          "validationAction": "error"
+        }
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "validator applied on users",
+        "source": {
+          "kind": "listCollections"
+        },
+        "filter": {
+          "kind": "and",
+          "exprs": [
+            {
+              "kind": "field",
+              "field": "name",
+              "op": "$eq",
+              "value": "users"
+            },
+            {
+              "kind": "field",
+              "field": "options.validationLevel",
+              "op": "$eq",
+              "value": "strict"
+            },
+            {
+              "kind": "field",
+              "field": "options.validationAction",
+              "op": "$eq",
+              "value": "error"
+            },
+            {
+              "kind": "field",
+              "field": "options.validator.$jsonSchema",
+              "op": "$eq",
+              "value": {
+                "additionalProperties": false,
+                "bsonType": "object",
+                "properties": {
+                  "_id": {
+                    "bsonType": "objectId"
+                  },
+                  "createdAt": {
+                    "bsonType": "date"
+                  },
+                  "displayName": {
+                    "bsonType": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "githubId": {
+                    "bsonType": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "googleId": {
+                    "bsonType": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "password": {
+                    "bsonType": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "passwordVersion": {
+                    "bsonType": [
+                      "null",
+                      "int"
+                    ]
+                  },
+                  "updatedAt": {
+                    "bsonType": "date"
+                  },
+                  "userType": {
+                    "bsonType": "string",
+                    "enum": [
+                      "GOOGLE",
+                      "USERNAME",
+                      "GITHUB"
+                    ]
+                  },
+                  "username": {
+                    "bsonType": "string"
+                  }
+                },
+                "required": [
+                  "_id",
+                  "createdAt",
+                  "updatedAt",
+                  "userType",
+                  "username"
+                ]
+              }
+            }
+          ]
+        },
+        "expect": "exists"
+      }
+    ]
+  }
+]

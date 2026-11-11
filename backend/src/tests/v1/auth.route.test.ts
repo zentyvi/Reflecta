@@ -21,7 +21,7 @@ vi.mock("google-auth-library", () => {
 
 describe("Auth Controller Integration Tests", () => {
   // Test data to be reused across test cases
-  const mockUser = {
+  const mockedRequestBody = {
     username: "testuser" + Date.now(),
     password: "Password123!",
     password_confirmation: "Password123!",
@@ -29,14 +29,14 @@ describe("Auth Controller Integration Tests", () => {
 
   // Optional: Clean up created test user from the database after running all tests
   afterAll(async () => {
-    await db.orm.users.where({ username: mockUser.username }).delete();
+    await db.orm.users.where({ username: mockedRequestBody.username }).delete();
   });
 
   describe("POST /api/v1/auth/sign-up", () => {
     it("should successfully register a new user and return a JWT token", async () => {
       const response = await request(app)
         .post("/api/v1/auth/sign-up")
-        .send(mockUser);
+        .send(mockedRequestBody);
 
       expect(response.status).toBe(201);
 
@@ -62,7 +62,7 @@ describe("Auth Controller Integration Tests", () => {
     it("should successfully authenticate an existing user and return a JWT token", async () => {
       const response = await request(app)
         .post("/api/v1/auth/login")
-        .send(mockUser);
+        .send(mockedRequestBody);
 
       expect(response.status).toBe(200);
 
@@ -74,7 +74,7 @@ describe("Auth Controller Integration Tests", () => {
     it("should return 400 Bad Request when password does not match", async () => {
       // Send request with incorrect password
       const response = await request(app).post("/api/v1/auth/login").send({
-        username: mockUser.username,
+        username: mockedRequestBody.username,
         password: "WrongPassword123!",
       });
 

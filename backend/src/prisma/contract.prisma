@@ -7,10 +7,10 @@ model User {
   username        String   @unique
   displayName     String?
   password        String?
+  passwordVersion Int32?
   createdAt       Date     @onCreate(now())
   updatedAt       Date     @onCreate(now()) @onUpdate(now())
   memories        Memory[]
-  passwordVersion Int32?
 
   @@map("users")
 }

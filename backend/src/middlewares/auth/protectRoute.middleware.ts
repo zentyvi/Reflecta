@@ -1,6 +1,6 @@
-import type { Handler } from "express";
+import type { RequestHandler } from "express";
 
-const protectRoute: Handler = (req, res, next) => {
+const protectRoute: RequestHandler = (req, res, next) => {
   const user = req?.user;
   if (!user) {
     return res.status(403).json({
