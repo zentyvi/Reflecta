@@ -22,7 +22,7 @@ import type {
 } from '@prisma/orm-mongo/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'b44ebc17a358117d2bcf64ecadc0c7b8bec5040952a3e610c4dc1bfc59dbeafe'>;
+  StorageHashBase<'37865ea759134e440d83b0af7726ceb8e5966028246479b433ea5c3e6c92d2c9'>;
 export type ExecutionHash =
   ExecutionHashBase<'37f7024536c9d43a190c746ddc37120354fe37357499dbd0f88c0cfa38db2b90'>;
 export type ProfileHash =
@@ -185,7 +185,7 @@ type ContractBase = Omit<
                     readonly githubId: { readonly bsonType: readonly ['null', 'string'] };
                     readonly googleId: { readonly bsonType: readonly ['null', 'string'] };
                     readonly password: { readonly bsonType: readonly ['null', 'string'] };
-                    readonly passwordVersion: { readonly bsonType: 'int' };
+                    readonly passwordVersion: { readonly bsonType: readonly ['null', 'int'] };
                     readonly updatedAt: { readonly bsonType: 'date' };
                     readonly userType: {
                       readonly bsonType: 'string';
@@ -196,7 +196,6 @@ type ContractBase = Omit<
                   readonly required: readonly [
                     '_id',
                     'createdAt',
-                    'passwordVersion',
                     'updatedAt',
                     'userType',
                     'username',
@@ -373,7 +372,7 @@ type ContractBase = Omit<
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
               };
               readonly passwordVersion: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/int32@1' };
               };
               readonly updatedAt: {

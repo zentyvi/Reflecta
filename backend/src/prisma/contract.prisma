@@ -10,7 +10,7 @@ model User {
   createdAt       Date     @onCreate(now())
   updatedAt       Date     @onCreate(now()) @onUpdate(now())
   memories        Memory[]
-  passwordVersion Int32
+  passwordVersion Int32?
 
   @@map("users")
 }

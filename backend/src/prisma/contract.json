@@ -274,7 +274,7 @@
                 }
               },
               "passwordVersion": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "mongo/int32@1",
                   "kind": "scalar"
@@ -504,7 +504,10 @@
                       ]
                     },
                     "passwordVersion": {
-                      "bsonType": "int"
+                      "bsonType": [
+                        "null",
+                        "int"
+                      ]
                     },
                     "updatedAt": {
                       "bsonType": "date"
@@ -524,7 +527,6 @@
                   "required": [
                     "_id",
                     "createdAt",
-                    "passwordVersion",
                     "updatedAt",
                     "userType",
                     "username"
@@ -551,7 +553,7 @@
         "kind": "mongo-database"
       }
     },
-    "storageHash": "b44ebc17a358117d2bcf64ecadc0c7b8bec5040952a3e610c4dc1bfc59dbeafe"
+    "storageHash": "37865ea759134e440d83b0af7726ceb8e5966028246479b433ea5c3e6c92d2c9"
   },
   "execution": {
     "executionHash": "37f7024536c9d43a190c746ddc37120354fe37357499dbd0f88c0cfa38db2b90",
