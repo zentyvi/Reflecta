@@ -25,21 +25,23 @@ model Memory {
   id        ObjectId @id @map("_id")
   date      Date
   title     String
-  events    String?
   rating    Int32
   note      String?
-  author    User     @relation(references: [id], fields: [authorId])
-  authorId  ObjectId
   createdAt Date     @onCreate(now())
   updatedAt Date     @onCreate(now()) @onUpdate(now())
+  author    User     @relation(references: [id], fields: [authorId])
+  authorId  ObjectId
+  events    Event[]
 
   @@map("memories")
 }
 
 model Event {
-  id     ObjectId @id @map("_id")
-  title  String
-  rating Int32?
+  id       ObjectId @id @map("_id")
+  title    String
+  rating   Int32?
+  memory   Memory   @relation(references: [id], fields: [memoryId])
+  memoryId ObjectId
 
   @@map("events")
 }

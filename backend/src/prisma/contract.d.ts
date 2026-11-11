@@ -22,7 +22,7 @@ import type {
 } from '@prisma/orm-mongo/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'ca009261eff5854d00b26a930c74b8334ebdbcf9e72c34c4d6f8f83ac9738009'>;
+  StorageHashBase<'b44ebc17a358117d2bcf64ecadc0c7b8bec5040952a3e610c4dc1bfc59dbeafe'>;
 export type ExecutionHash =
   ExecutionHashBase<'37f7024536c9d43a190c746ddc37120354fe37357499dbd0f88c0cfa38db2b90'>;
 export type ProfileHash =
@@ -62,22 +62,24 @@ export type FieldInputTypes = FieldTypesFromDomain<
 export namespace Models {
   export type unbound_Event = {
     id: FieldOutputTypes['__unbound__']['Event']['id'];
+    memoryId: FieldOutputTypes['__unbound__']['Event']['memoryId'];
     rating: FieldOutputTypes['__unbound__']['Event']['rating'];
     title: FieldOutputTypes['__unbound__']['Event']['title'];
-    readonly [RelationKeys]?: never;
+    memory: unbound_Memory;
+    readonly [RelationKeys]?: 'memory';
   };
   export type unbound_Memory = {
     authorId: FieldOutputTypes['__unbound__']['Memory']['authorId'];
     createdAt: FieldOutputTypes['__unbound__']['Memory']['createdAt'];
     date: FieldOutputTypes['__unbound__']['Memory']['date'];
-    events: FieldOutputTypes['__unbound__']['Memory']['events'];
     id: FieldOutputTypes['__unbound__']['Memory']['id'];
     note: FieldOutputTypes['__unbound__']['Memory']['note'];
     rating: FieldOutputTypes['__unbound__']['Memory']['rating'];
     title: FieldOutputTypes['__unbound__']['Memory']['title'];
     updatedAt: FieldOutputTypes['__unbound__']['Memory']['updatedAt'];
     author: unbound_User;
-    readonly [RelationKeys]?: 'author';
+    events: unbound_Event[];
+    readonly [RelationKeys]?: 'author' | 'events';
   };
   export type unbound_User = {
     createdAt: FieldOutputTypes['__unbound__']['User']['createdAt'];
@@ -121,10 +123,11 @@ type ContractBase = Omit<
                   readonly bsonType: 'object';
                   readonly properties: {
                     readonly _id: { readonly bsonType: 'objectId' };
+                    readonly memoryId: { readonly bsonType: 'objectId' };
                     readonly rating: { readonly bsonType: readonly ['null', 'int'] };
                     readonly title: { readonly bsonType: 'string' };
                   };
-                  readonly required: readonly ['_id', 'title'];
+                  readonly required: readonly ['_id', 'memoryId', 'title'];
                 };
                 readonly kind: 'mongo-validator';
                 readonly validationAction: 'error';
@@ -142,7 +145,6 @@ type ContractBase = Omit<
                     readonly authorId: { readonly bsonType: 'objectId' };
                     readonly createdAt: { readonly bsonType: 'date' };
                     readonly date: { readonly bsonType: 'date' };
-                    readonly events: { readonly bsonType: readonly ['null', 'string'] };
                     readonly note: { readonly bsonType: readonly ['null', 'string'] };
                     readonly rating: { readonly bsonType: 'int' };
                     readonly title: { readonly bsonType: 'string' };
@@ -183,7 +185,7 @@ type ContractBase = Omit<
                     readonly githubId: { readonly bsonType: readonly ['null', 'string'] };
                     readonly googleId: { readonly bsonType: readonly ['null', 'string'] };
                     readonly password: { readonly bsonType: readonly ['null', 'string'] };
-                    readonly passwordVersion: { readonly bsonType: readonly ['null', 'int'] };
+                    readonly passwordVersion: { readonly bsonType: 'int' };
                     readonly updatedAt: { readonly bsonType: 'date' };
                     readonly userType: {
                       readonly bsonType: 'string';
@@ -194,6 +196,7 @@ type ContractBase = Omit<
                   readonly required: readonly [
                     '_id',
                     'createdAt',
+                    'passwordVersion',
                     'updatedAt',
                     'userType',
                     'username',
@@ -232,6 +235,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/objectId@1' };
               };
+              readonly memoryId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/objectId@1' };
+              };
               readonly rating: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/int32@1' };
@@ -241,11 +248,25 @@ type ContractBase = Omit<
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
               };
             };
-            readonly relations: Record<string, never>;
+            readonly relations: {
+              readonly memory: {
+                readonly to: {
+                  readonly namespace: '__unbound__' & NamespaceId;
+                  readonly model: 'Memory';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['memoryId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
             readonly storage: {
               readonly collection: 'events';
               readonly fields: {
                 readonly id: { readonly field: '_id' };
+                readonly memoryId: { readonly field: 'memoryId' };
                 readonly rating: { readonly field: 'rating' };
                 readonly title: { readonly field: 'title' };
               };
@@ -264,10 +285,6 @@ type ContractBase = Omit<
               readonly date: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/date@1' };
-              };
-              readonly events: {
-                readonly nullable: true;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
               };
               readonly id: {
                 readonly nullable: false;
@@ -303,6 +320,17 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['id'];
                 };
               };
+              readonly events: {
+                readonly to: {
+                  readonly namespace: '__unbound__' & NamespaceId;
+                  readonly model: 'Event';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['memoryId'];
+                };
+              };
             };
             readonly storage: {
               readonly collection: 'memories';
@@ -310,7 +338,6 @@ type ContractBase = Omit<
                 readonly authorId: { readonly field: 'authorId' };
                 readonly createdAt: { readonly field: 'createdAt' };
                 readonly date: { readonly field: 'date' };
-                readonly events: { readonly field: 'events' };
                 readonly id: { readonly field: '_id' };
                 readonly note: { readonly field: 'note' };
                 readonly rating: { readonly field: 'rating' };
@@ -346,7 +373,7 @@ type ContractBase = Omit<
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/string@1' };
               };
               readonly passwordVersion: {
-                readonly nullable: true;
+                readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'mongo/int32@1' };
               };
               readonly updatedAt: {
