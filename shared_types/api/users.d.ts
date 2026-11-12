@@ -1,5 +1,6 @@
 export {};
 import type { Models } from "../../backend/src/prisma/contract.d.ts";
+import type { UserProfile } from "../other/UserInfo.d.ts";
 
 type MyProfileErrorsBody = {
   success: false;
@@ -8,10 +9,7 @@ type MyProfileErrorsBody = {
 
 type MyProfileSuccessBody = {
   success: true;
-  user: Pick<
-    Models.unbound_User,
-    "id" | "userType" | "username" | "displayName" | "createdAt" | "updatedAt"
-  >;
+  user: UserProfile;
 };
 
 export type MyProfileResponseBody = MyProfileErrorsBody | MyProfileSuccessBody;

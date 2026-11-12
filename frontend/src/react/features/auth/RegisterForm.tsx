@@ -1,4 +1,4 @@
-import type { ErrorsObject } from "@shared/ErrorObjects.d.ts";
+import type { ErrorsObject } from "@shared/other/ErrorObjects.js";
 import { useState } from "react";
 import api from "../../../api/index.ts";
 import FormInput from "../../components/FormInput.tsx";

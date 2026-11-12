@@ -1,4 +1,4 @@
-import type { FieldErrors } from "@shared/ErrorObjects.d.ts";
+import type { FieldErrors } from "@shared/other/ErrorObjects";
 
 const styles = {} as CSSModuleClasses;
 

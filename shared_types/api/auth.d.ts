@@ -1,4 +1,4 @@
-import type { ErrorsObject } from "../ErrorObjects.d.ts";
+import type { ErrorsObject } from "../other/FormErrors";
 
 export {};
 
