@@ -3,8 +3,9 @@ import httpClient from "../inner/httpClient.ts";
 
 async function getMyProfile() {
   try {
-    const result = await httpClient.post<string, MyProfileResponseBody>(
+    const result = await httpClient.get<string, MyProfileResponseBody>(
       "/users/me/profile",
+      { authenticationRequired: true },
     );
     return result;
   } catch (err) {
