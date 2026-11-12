@@ -1,8 +1,12 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
-type LayoutContext = {
+type Sidebar = {
   isSidebarOpen: boolean;
   setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+type LayoutContext = {
+  sidebar: Sidebar;
 };
 
 type Props = {
@@ -11,6 +15,7 @@ type Props = {
 const LayoutContext = createContext<LayoutContext | null>(null);
 
 export function LayoutProvider({ children }: Props) {
+  // Sidebar layout block
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
@@ -27,7 +32,9 @@ export function LayoutProvider({ children }: Props) {
   });
 
   return (
-    <LayoutContext.Provider value={{ isSidebarOpen, setIsSidebarOpen }}>
+    <LayoutContext.Provider
+      value={{ sidebar: { isSidebarOpen, setIsSidebarOpen } }}
+    >
       {children}
     </LayoutContext.Provider>
   );

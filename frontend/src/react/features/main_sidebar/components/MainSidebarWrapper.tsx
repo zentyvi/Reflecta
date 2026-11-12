@@ -7,7 +7,7 @@ type Props = {
 };
 
 function MainSidebarWrapper({ children }: Props) {
-  const { isSidebarOpen, setIsSidebarOpen } = useLayout();
+  const { isSidebarOpen, setIsSidebarOpen } = useLayout().sidebar;
   useEscape(() => setIsSidebarOpen(false));
 
   return (

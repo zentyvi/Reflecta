@@ -6,7 +6,7 @@ import MainSidebarLink from "./components/MainSidebarLink.tsx";
 
 function MainSidebar() {
   const { pathname: currentPath } = useLocation();
-  const { isSidebarOpen, setIsSidebarOpen } = useLayout();
+  const { isSidebarOpen, setIsSidebarOpen } = useLayout().sidebar;
 
   return (
     <MainSidebarWrapper>

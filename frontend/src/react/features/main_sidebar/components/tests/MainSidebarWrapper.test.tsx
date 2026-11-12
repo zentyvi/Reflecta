@@ -8,8 +8,10 @@ vi.mock("../../../../contexts/LayoutProvider.tsx");
 describe("MainSidebarWrapper component", () => {
   it("renders children correctly", () => {
     vi.mocked(useLayout).mockReturnValue({
-      isSidebarOpen: true,
-      setIsSidebarOpen: vi.fn(),
+      sidebar: {
+        isSidebarOpen: true,
+        setIsSidebarOpen: vi.fn(),
+      },
     } as any);
 
     render(
@@ -25,8 +27,10 @@ describe("MainSidebarWrapper component", () => {
     const setIsSidebarOpenMock = vi.fn();
 
     vi.mocked(useLayout).mockReturnValue({
-      isSidebarOpen: true,
-      setIsSidebarOpen: setIsSidebarOpenMock,
+      sidebar: {
+        isSidebarOpen: true,
+        setIsSidebarOpen: setIsSidebarOpenMock,
+      },
     } as any);
 
     render(

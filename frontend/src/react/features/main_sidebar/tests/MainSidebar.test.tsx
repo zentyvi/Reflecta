@@ -25,10 +25,10 @@ describe("MainSidebar component", () => {
   it("renders sidebar correctly and handles toggle click", () => {
     const setIsSidebarOpenMock = vi.fn();
 
-    vi.mocked(useLayout).mockReturnValue({
+    vi.mocked(useLayout).mockReturnValue({sidebar: {
       isSidebarOpen: true,
       setIsSidebarOpen: setIsSidebarOpenMock,
-    } as any);
+    }} as any);
 
     vi.mocked(useLocation).mockReturnValue({
       pathname: "/",
