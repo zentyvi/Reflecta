@@ -16,7 +16,7 @@ describe("Users module", () => {
       const mockResponse = { id: "fake id", username: "fake username" };
 
       // Setup mock resolution for httpClient.get
-      vi.mocked(httpClient.get).mockResolvedValueOnce(mockResponse);
+      vi.mocked(httpClient.get).mockResolvedValueOnce(mockResponse as any);
 
       const result = await users.getMyProfile();
 

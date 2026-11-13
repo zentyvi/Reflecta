@@ -20,7 +20,7 @@ describe("Auth Module", () => {
     const mockResponse = { token: "auth-jwt-token" };
 
     // Setup mock resolution for httpClient.post
-    vi.mocked(httpClient.post).mockResolvedValueOnce(mockResponse);
+    vi.mocked(httpClient.post).mockResolvedValueOnce(mockResponse as any);
 
     const result = await auth.login(loginData);
 
@@ -40,7 +40,7 @@ describe("Auth Module", () => {
     };
     const mockResponse = { token: "new-user-token" };
 
-    vi.mocked(httpClient.post).mockResolvedValueOnce(mockResponse);
+    vi.mocked(httpClient.post).mockResolvedValueOnce(mockResponse as any);
 
     const result = await auth.signUp(signUpData);
 
@@ -55,7 +55,7 @@ describe("Auth Module", () => {
     const googleToken = "google-oauth-token-xyz";
     const mockResponse = { token: "server-jwt-token" };
 
-    vi.mocked(httpClient.post).mockResolvedValueOnce(mockResponse);
+    vi.mocked(httpClient.post).mockResolvedValueOnce(mockResponse as any);
 
     const result = await auth.googleLogin(googleToken);
 
@@ -70,7 +70,7 @@ describe("Auth Module", () => {
     const githubCode = "github-oauth-code-abc";
     const mockResponse = { token: "server-jwt-token" };
 
-    vi.mocked(httpClient.post).mockResolvedValueOnce(mockResponse);
+    vi.mocked(httpClient.post).mockResolvedValueOnce(mockResponse as any);
 
     const result = await auth.githubLogin(githubCode);
 

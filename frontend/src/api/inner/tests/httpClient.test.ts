@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import httpClient from "../httpClient.ts";
 import { apiUrl } from "../config.ts";
-import type { ApiSystemError } from "@shared/api/base.js";
+import type { ApiSystemError } from "@shared/api/common.d.ts";
 
 // Mock sensitive configuration values while preserving the original apiUrl
 vi.mock("../../config.ts", async (importOriginal) => {
