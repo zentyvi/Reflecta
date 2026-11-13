@@ -1,10 +1,12 @@
 import type {
   AuthResponseBody,
   OAuthResponseBody,
-} from "@shared/api/auth.d.ts";
+} from "@shared/api/endpoints/auth.d.ts";
 import type { MyProfileResponseBody } from "@shared/api/users.d.ts";
 import type { RequestHandler } from "express";
 import type { ProtectedHandler } from "./express";
+
+// --- Endpoint handlers types ---
 
 // Auth handlers
 

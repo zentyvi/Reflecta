@@ -1,5 +1,8 @@
 export {};
 
+// --- JWT types ---
+
+// User payload types
 type JwtPayloadBase = {
   id: string;
   username: string;

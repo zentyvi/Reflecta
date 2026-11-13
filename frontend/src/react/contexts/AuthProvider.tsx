@@ -1,11 +1,13 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import type { UserProfile } from "@shared/other/UserInfo.js";
+import type { MyProfileResponseBody } from "@shared/api/responses/users.d.ts";
 import api from "../../api/index.ts";
 
 type AuthContext = {
   isAuthenticated: boolean;
   currentUser: object | null;
-  setCurrentUser: React.Dispatch<React.SetStateAction<null | UserProfile>>;
+  setCurrentUser: React.Dispatch<
+    React.SetStateAction<null | MyProfileResponseBody>
+  >;
   login: (token: string) => void;
 };
 
@@ -15,20 +17,23 @@ type Props = {
 const AuthContext = createContext<AuthContext | null>(null);
 
 export function AuthProvider({ children }: Props) {
-  const [currentUser, setCurrentUser] = useState<null | UserProfile>(null);
+  const [currentUser, setCurrentUser] = useState<null | MyProfileResponseBody>(
+    null,
+  );
   const isAuthenticated = Boolean(localStorage.getItem("token"));
 
   useEffect(() => {
+    if (!isAuthenticated) return;
     const fetchProfile = async () => {
       try {
         const result = await api.users.getMyProfile();
         if (result?.success) {
-          setCurrentUser(result.user);
+          setCurrentUser(result.data);
         }
       } catch (err) {
-        const message = err instanceof Error ? err.message : "";
+        const message = err instanceof Error ? err.message : "No message";
         console.error(
-          `[Failed to fetch user's profile in AuthProvider] ${message}`,
+          `[Failed to fetch user's profile in AuthProvider]: ${message}`,
         );
       }
     };

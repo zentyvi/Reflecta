@@ -1,11 +1,12 @@
-import type { RequestHandler } from "express";
+import type { AppMiddleware } from "../../types/express";
 
-const protectRoute: RequestHandler = (req, res, next) => {
+const protectRoute: AppMiddleware = (req, res, next) => {
   const user = req?.user;
   if (!user) {
-    return res.status(403).json({
+    return next({
       message: "Invalid or expired token",
-      action: "DELETE_TOKEN",
+      statusCode: 403,
+      actions: ["DELETE_TOKEN"],
     });
   }
   next();

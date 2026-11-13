@@ -1,13 +1,17 @@
-import type {
-  AuthResponseBody,
-  LoginRequestBody,
-  SignUpRequestBody,
-} from "@shared/api/auth.d.ts";
+import type { AuthResponseBody } from "@shared/api/responses/auth.d.ts";
+import type { FormErrorsObject } from "@shared/other/FormValidationErrors.d.ts";
+
 import httpClient from "../inner/httpClient.ts";
+
+type SignUpRequestBody = {
+  username: string;
+  password: string;
+  password_confirmation: string;
+};
 
 async function signUp(data: SignUpRequestBody) {
   try {
-    const result = await httpClient.post<SignUpRequestBody, AuthResponseBody>(
+    const result = await httpClient.post<AuthResponseBody, FormErrorsObject>(
       "/auth/sign-up",
       {
         ignore400: true,
@@ -16,14 +20,20 @@ async function signUp(data: SignUpRequestBody) {
     );
     return result;
   } catch (err) {
-    const message = err instanceof Error ? err.message : "";
-    console.error(`[Failed to sign up] ${message}`);
+    const message = err instanceof Error ? err.message : "No message";
+    console.error(`[Failed to sign up]: ${message}`);
+    throw err;
   }
 }
 
+type LoginRequestBody = {
+  username: string;
+  password: string;
+};
+
 async function login(data: LoginRequestBody) {
   try {
-    const result = await httpClient.post<LoginRequestBody, AuthResponseBody>(
+    const result = await httpClient.post<AuthResponseBody, FormErrorsObject>(
       "/auth/login",
       {
         ignore400: true,
@@ -32,30 +42,32 @@ async function login(data: LoginRequestBody) {
     );
     return result;
   } catch (err) {
-    const message = err instanceof Error ? err.message : "";
-    console.error(`[Failed to login] ${message}`);
+    const message = err instanceof Error ? err.message : "No message";
+    console.error(`[Failed to login]: ${message}`);
+    throw err;
   }
 }
 
 async function googleLogin(googleToken: string) {
   try {
-    const result = await httpClient.post<
-      { googleToken: string },
-      AuthResponseBody
-    >("/auth/google", {
-      ignore400: true,
-      body: { googleToken },
-    });
+    const result = await httpClient.post<AuthResponseBody, string>(
+      "/auth/google",
+      {
+        ignore400: true,
+        body: { googleToken },
+      },
+    );
     return result;
   } catch (err) {
-    const message = err instanceof Error ? err.message : "";
-    console.error(`[Failed to login via Google] ${message}`);
+    const message = err instanceof Error ? err.message : "No message";
+    console.error(`[Failed to login via Google]: ${message}`);
+    throw err;
   }
 }
 
 async function githubLogin(code: string) {
   try {
-    const result = await httpClient.post<{ code: string }, AuthResponseBody>(
+    const result = await httpClient.post<AuthResponseBody, string>(
       "/auth/github",
       {
         ignore400: true,
@@ -64,8 +76,9 @@ async function githubLogin(code: string) {
     );
     return result;
   } catch (err) {
-    const message = err instanceof Error ? err.message : "";
-    console.error(`[Failed to login via Github] ${message}`);
+    const message = err instanceof Error ? err.message : "No message";
+    console.error(`[Failed to login via Github]: ${message}`);
+    throw err;
   }
 }
 

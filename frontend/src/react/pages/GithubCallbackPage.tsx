@@ -25,7 +25,7 @@ function GithubCallbackPage() {
       try {
         const result = await api.auth.githubLogin(code);
         if (result?.success) {
-          login(result.token);
+          login(result.data.token);
         }
       } catch (err) {
         setState("error");

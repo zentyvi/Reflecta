@@ -1,9 +1,9 @@
-import type { RequestHandler } from "express";
 import jwt from "jsonwebtoken";
+import type { AppMiddleware } from "../../types/express";
 import type { JwtUserPayload } from "../../types/jwt";
 import { getFromEnv } from "../../utils/helpers.ts";
 
-const authorizeUser: RequestHandler = (req, res, next) => {
+const authorizeUser: AppMiddleware = (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
 

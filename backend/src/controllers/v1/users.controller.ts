@@ -1,7 +1,12 @@
+import type { MyProfileResponseBody } from "@shared/api/responses/users.js";
 import type { RequestHandler } from "express";
 import protectRoute from "../../middlewares/auth/protectRoute.middleware.js";
 import { db } from "../../prisma/db.js";
-import type { GetMyProfileHanlder } from "../../types/handlers.js";
+import type { GetMyProfileHanlder } from "../../types/endpoints.js";
+import {
+  makeSuccessResponse,
+  makeSystemErrorResponse,
+} from "../../utils/makeResponse.js";
 
 const _getMyProfile: GetMyProfileHanlder = async (req, res, next) => {
   try {
@@ -9,9 +14,11 @@ const _getMyProfile: GetMyProfileHanlder = async (req, res, next) => {
     const user = await db.orm.users.where({ id }).first();
 
     if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+      const responseData = makeSystemErrorResponse({
+        statusCode: 404,
+        message: "User not found",
+      });
+      return next(responseData);
     }
 
     const userResponseObject = {
@@ -23,7 +30,9 @@ const _getMyProfile: GetMyProfileHanlder = async (req, res, next) => {
       updatedAt: user.updatedAt,
     };
 
-    return res.json({ success: true, user: userResponseObject });
+    const responseData =
+      makeSuccessResponse<MyProfileResponseBody>(userResponseObject);
+    return res.json(responseData);
   } catch (err) {
     next(err);
   }

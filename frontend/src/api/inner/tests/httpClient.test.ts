@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import httpClient from "../httpClient.ts";
 import { apiUrl } from "../config.ts";
+import type { ApiSystemError } from "@shared/api/base.js";
 
 // Mock sensitive configuration values while preserving the original apiUrl
 vi.mock("../../config.ts", async (importOriginal) => {
@@ -118,5 +119,22 @@ describe("HttpClient", () => {
     });
 
     expect(result).toEqual(errorResponseData);
+  });
+
+  it("should throw an error if a system error has occured", async () => {
+    const errorResponseData: ApiSystemError = {
+      success: false,
+      statusCode: 400,
+      errorType: "SYSTEM",
+      message: "Invalid email",
+    };
+
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: false,
+      status: 400,
+      json: async () => errorResponseData,
+    } as Response);
+
+    await expect(httpClient.post("/submit")).rejects.toThrow();
   });
 });

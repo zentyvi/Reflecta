@@ -13,7 +13,7 @@ function GoogleLoginButton({ className = "", disabled = false }: Props) {
     try {
       const result = await api.auth.googleLogin(token);
       if (result.success) {
-        login(result.token);
+        login(result.data.token);
       }
     } catch (err) {
       console.error(err);

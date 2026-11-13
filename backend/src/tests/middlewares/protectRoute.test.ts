@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import protectRoute from "../../middlewares/auth/protectRoute.middleware.ts";
 
 describe("Protect route middleware", () => {
-  it("should return 403 Forbidden when req.user is null", () => {
+  it("should pass an error to next() when req.user is null", () => {
     // 1. Create a mock function for res.json()
     const jsonMock = vi.fn();
 
@@ -21,9 +21,11 @@ describe("Protect route middleware", () => {
     protectRoute(req, res, next);
 
     // 4. Assertions
-    expect(res.status).toHaveBeenCalledWith(403); // Check if status 403 was set
-    expect(jsonMock).toHaveBeenCalled(); // Check if response was sent with json
-    expect(next).not.toHaveBeenCalled(); // Ensure next() was NOT called (access denied)
+    expect(next).toHaveBeenCalledWith({
+      message: "Invalid or expired token",
+      statusCode: 403,
+      actions: ["DELETE_TOKEN"],
+    });
   });
 
   it("allows request when user isn't null and calls next()", () => {

@@ -1,5 +1,7 @@
 import bcrypt from "bcryptjs";
 import { validationResult } from "express-validator";
+import type { AuthResponseBody } from "@shared/api/responses/auth.d.ts";
+import type { FormErrorsObject } from "@shared/other/FormValidationErrors.d.ts";
 import validateSignUp from "../../middlewares/validators/validateSignUp.middleware.ts";
 import { db } from "../../prisma/db.ts";
 import type {
@@ -7,20 +9,25 @@ import type {
   GoogleLoginHanlder,
   LoginHandler,
   SignUpHandler,
-} from "../../types/handlers";
+} from "../../types/endpoints";
 import {
   createJWT,
   generateDefaultUsername,
   getFromEnv,
 } from "../../utils/helpers.js";
-
-const GOOGLE_CLIENT_ID = getFromEnv("GOOGLE_CLIENT_ID");
+import {
+  makeBusinessErrorResponse,
+  makeSuccessResponse,
+} from "../../utils/makeResponse.ts";
 
 const _signUp: SignUpHandler = async (req, res, next) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.mapped(), success: false });
+      const responseData = makeBusinessErrorResponse<FormErrorsObject>({
+        errorData: errors.mapped(),
+      });
+      return res.status(400).json(responseData);
     }
     const { username, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -36,7 +43,8 @@ const _signUp: SignUpHandler = async (req, res, next) => {
 
     const token = createJWT(user);
 
-    res.status(201).json({ token, success: true });
+    const responseData = makeSuccessResponse<AuthResponseBody>({ token });
+    res.status(201).json(responseData);
   } catch (err) {
     next(err);
   }
@@ -52,29 +60,32 @@ const login: LoginHandler = async (req, res, next) => {
       .first();
 
     if (!user) {
-      return res.status(400).json({
-        errors: { username: { msg: "User doesn't exist" } },
-        success: false,
+      const errorData = { username: { msg: "User doesn't exist" } };
+      const responseData = makeBusinessErrorResponse<FormErrorsObject>({
+        errorData,
       });
+      return res.status(400).json(responseData);
     }
 
     if (user.userType !== "USERNAME") {
-      return res.status(400).json({
-        errors: {
-          password: {
-            msg: "You've used another method to login (Google or Github)",
-          },
+      const errorData = {
+        password: {
+          msg: "You've used another method to login (Google or Github)",
         },
-        success: false,
+      };
+      const responseData = makeBusinessErrorResponse<FormErrorsObject>({
+        errorData,
       });
+      return res.status(400).json(responseData);
     }
 
     const passwrodMatch = await bcrypt.compare(password, user?.password ?? "");
     if (!passwrodMatch) {
-      return res.status(400).json({
-        errors: { password: { msg: "Incorrect password" } },
-        success: false,
+      const errorData = { password: { msg: "Incorrect password" } };
+      const responseData = makeBusinessErrorResponse<FormErrorsObject>({
+        errorData,
       });
+      return res.status(400).json(responseData);
     }
 
     const payload = {
@@ -85,7 +96,8 @@ const login: LoginHandler = async (req, res, next) => {
     };
     const token = createJWT(payload);
 
-    res.status(200).json({ token, success: true });
+    const responseData = makeSuccessResponse<AuthResponseBody>({ token });
+    res.status(200).json(responseData);
   } catch (err) {
     next(err);
   }
@@ -95,10 +107,10 @@ const googleLogin: GoogleLoginHanlder = async (req, res, next) => {
   try {
     const { googleToken } = req.body;
     if (!googleToken) {
-      return res.status(400).json({
-        message: "Authorization google id is required",
-        success: false,
+      const responseData = makeBusinessErrorResponse<string>({
+        errorData: "Authorization google id is required",
       });
+      return res.status(400).json(responseData);
     }
 
     const userResponse = await fetch(
@@ -111,9 +123,10 @@ const googleLogin: GoogleLoginHanlder = async (req, res, next) => {
     );
 
     if (!userResponse.ok) {
-      return res
-        .status(401)
-        .json({ message: "Failed to fetch user from Google", success: false });
+      const responseData = makeBusinessErrorResponse<string>({
+        errorData: "Failed to fetch user from Google",
+      });
+      return res.status(401).json(responseData);
     }
 
     const googleUser = await userResponse.json();
@@ -131,7 +144,8 @@ const googleLogin: GoogleLoginHanlder = async (req, res, next) => {
 
     const token = createJWT(user);
 
-    res.status(200).json({ token, success: true });
+    const responseData = makeSuccessResponse<AuthResponseBody>({ token });
+    res.status(200).json(responseData);
   } catch (err) {
     next(err);
   }
@@ -141,9 +155,10 @@ const githubLogin: GithubLoginHandler = async (req, res, next) => {
   try {
     const { code } = req.body;
     if (!code) {
-      return res
-        .status(400)
-        .json({ message: "Authorization code is required", success: false });
+      const responseData = makeBusinessErrorResponse<string>({
+        errorData: "Authorization code is required",
+      });
+      return res.status(400).json(responseData);
     }
 
     const tokenResponse = await fetch(
@@ -190,7 +205,8 @@ const githubLogin: GithubLoginHandler = async (req, res, next) => {
 
     const token = createJWT(user);
 
-    res.status(200).json({ token, success: true });
+    const responseData = makeSuccessResponse<AuthResponseBody>({ token });
+    res.status(200).json(responseData);
   } catch (err) {
     next(err);
   }

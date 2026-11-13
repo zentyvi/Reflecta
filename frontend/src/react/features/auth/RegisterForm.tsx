@@ -1,5 +1,5 @@
-import type { ErrorsObject } from "@shared/other/ErrorObjects.js";
 import { useState } from "react";
+import type { FormErrorsObject } from "@shared/other/FormValidationErrors.d.ts";
 import api from "../../../api/index.ts";
 import FormInput from "../../components/FormInput.tsx";
 import useAuth from "../../contexts/AuthProvider.tsx";
@@ -10,7 +10,7 @@ import GoogleLoginButton from "./OAuth_buttons/GoogleLogInButton.tsx";
 
 function RegisterForm() {
   const [showPasswords, setShowPasswords] = useState(false);
-  const [errors, setErrors] = useState<ErrorsObject>({});
+  const [errors, setErrors] = useState<FormErrorsObject>({});
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -30,11 +30,11 @@ function RegisterForm() {
       };
       const result = await api.auth.signUp(data);
       if (!result.success) {
-        setErrors(result.errors);
+        setErrors(result.errorData);
         return;
       }
 
-      login(result.token);
+      login(result.data.token);
     } catch (err) {
       console.error(err);
     } finally {

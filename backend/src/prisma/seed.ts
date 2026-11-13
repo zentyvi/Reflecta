@@ -31,7 +31,7 @@ async function seed() {
 
       for (let i = 0; i < usersNumber; i++) {
         const user = await db.orm.users.select("id").create({
-          username: faker.internet.username(),
+          username: faker.internet.username().toLowerCase(),
           userType: "USERNAME",
           displayName: faker.internet.displayName(),
           password: hashedPassword,
