@@ -1,12 +1,12 @@
 // @ts-ignore
 import request from "supertest";
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
-import { db } from "../../prisma/db.ts";
-import protectRoute from "../../middlewares/auth/protectRoute.middleware.ts";
-import app from "../testing_app.ts";
+import { afterAll, describe, expect, it, vi } from "vitest";
+import { db } from "../../../prisma/db.ts";
+import protectRoute from "../../../middlewares/auth/protectRoute.middleware.ts";
+import app from "../../testing_app.ts";
 
 // Mock middleware
-vi.mock("../../middlewares/auth/protectRoute.middleware.ts");
+vi.mock("../../../middlewares/auth/protectRoute.middleware.ts");
 
 describe("Users Controller integrated tests", async () => {
   const createdUser = await db.orm.users.create({
@@ -40,7 +40,7 @@ describe("Users Controller integrated tests", async () => {
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBeTruthy();
-      expect(response.body.user).toEqual(expectedUserObject);
+      expect(response.body.data).toEqual(expectedUserObject);
     });
 
     it("return 404 not found, if an id is incorrect", async () => {
@@ -55,6 +55,7 @@ describe("Users Controller integrated tests", async () => {
 
       expect(response.status).toBe(404);
       expect(response.body.success).toBeFalsy();
+      expect(response.body.errorType).toBe("SYSTEM");
       expect(response.body).toHaveProperty("message");
     });
   });

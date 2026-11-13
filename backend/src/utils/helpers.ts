@@ -101,11 +101,7 @@ export const createJWT = <
   duration: string = "7d",
 ) => {
   // @ts-ignore
-  const jwtToken = jwt.sign(
-    {
-      id: data.id,
-      username: data.username,
-    },
+  const jwtToken = jwt.sign(data,
     getFromEnv("SECRET"),
     { expiresIn: duration },
   );

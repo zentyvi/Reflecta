@@ -1,23 +1,8 @@
 // @ts-ignore
 import request from "supertest";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
-import { db } from "../../prisma/db.ts";
-import app from "../testing_app.ts";
-
-vi.mock("google-auth-library", () => {
-  return {
-    OAuth2Client: class {
-      verifyIdToken() {
-        return Promise.resolve({
-          getPayload: () => ({
-            sub: "google_123456789", // Simulated Google user ID
-            email: "test@gmail.com",
-          }),
-        });
-      }
-    },
-  };
-});
+import { db } from "../../../prisma/db.ts";
+import app from "../../testing_app.ts";
 
 describe("Auth Controller Integration Tests", () => {
   // Test data to be reused across test cases
@@ -41,9 +26,9 @@ describe("Auth Controller Integration Tests", () => {
       expect(response.status).toBe(201);
 
       // Verify that response body contains the JWT token
-      expect(response.body).toHaveProperty("token");
+      expect(response.body.data).toHaveProperty("token");
+      expect(typeof response.body.data.token).toBe("string");
       expect(response.body.success).toBeTruthy();
-      expect(typeof response.body.token).toBe("string");
     });
 
     it("should return 400 Bad Request if validation fails (empty payload)", async () => {
@@ -53,7 +38,7 @@ describe("Auth Controller Integration Tests", () => {
       expect(response.status).toBe(400);
 
       // Ensure validation error object is returned in response
-      expect(response.body).toHaveProperty("errors");
+      expect(response.body).toHaveProperty("errorData");
       expect(response.body.success).toBeFalsy();
     });
   });
@@ -67,7 +52,7 @@ describe("Auth Controller Integration Tests", () => {
       expect(response.status).toBe(200);
 
       // Ensure token is returned upon successful authentication
-      expect(response.body).toHaveProperty("token");
+      expect(response.body.data).toHaveProperty("token");
       expect(response.body.success).toBeTruthy();
     });
 
@@ -80,7 +65,7 @@ describe("Auth Controller Integration Tests", () => {
 
       // Verify error response
       expect(response.status).toBe(400);
-      expect(response.body.errors).toHaveProperty("password");
+      expect(response.body.errorData).toHaveProperty("password");
       expect(response.body.success).toBeFalsy();
     });
   });
@@ -98,7 +83,7 @@ describe("Auth Controller Integration Tests", () => {
     });
 
     expect(response.status).toBe(400);
-    expect(response.body.errors).toHaveProperty("password");
+    expect(response.body.errorData).toHaveProperty("password");
     expect(response.body.success).toBeFalsy();
 
     await db.orm.users.where({ username: mockedGoogleUsername }).delete();
@@ -130,8 +115,8 @@ describe("Google Login Integration Test)", () => {
 
     // Verify response status and structure
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty("token");
-    expect(response.body.success).toBe(true);
+    expect(response.body.data).toHaveProperty("token");
+    expect(response.body.success).toBeTruthy();
 
     // Restore original fetch after test
     fetchSpy.mockRestore();
@@ -143,8 +128,8 @@ describe("Google Login Integration Test)", () => {
 
     // Verify error response
     expect(response.status).toBe(400);
-    expect(response.body.success).toBe(false);
-    expect(response.body.message).toBe("Authorization google id is required");
+    expect(response.body.success).toBeFalsy();
+    expect(response.body.errorData).toBe("Authorization google id is required");
   });
 
   it("should return 401 Unauthorized if Google API fetch fails", async () => {
@@ -160,8 +145,8 @@ describe("Google Login Integration Test)", () => {
 
     // Verify error response
     expect(response.status).toBe(401);
-    expect(response.body.success).toBe(false);
-    expect(response.body.message).toBe("Failed to fetch user from Google");
+    expect(response.body.success).toBeFalsy();
+    expect(response.body.errorData).toBe("Failed to fetch user from Google");
 
     // Restore fetch
     fetchSpy.mockRestore();
@@ -204,7 +189,7 @@ describe("GitHub Login Integration Test", () => {
 
     // Verify response
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty("token");
+    expect(response.body.data).toHaveProperty("token");
     expect(response.body.success).toBeTruthy();
 
     // Restore original fetch after test
@@ -215,7 +200,7 @@ describe("GitHub Login Integration Test", () => {
     const response = await request(app).post("/api/v1/auth/github").send({});
 
     expect(response.status).toBe(400);
-    expect(response.body).toHaveProperty("message");
+    expect(response.body).toHaveProperty("errorData");
     expect(response.body.success).toBeFalsy();
   });
 });

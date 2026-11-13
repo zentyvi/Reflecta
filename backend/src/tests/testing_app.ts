@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express, { json, urlencoded } from "express";
 import authorizeUser from "../middlewares/auth/authorizeUser.middleware.ts";
+import globalErrorHanlder from "../middlewares/globalErrorHanlder.ts";
 import api from "../routes/api_index.ts";
 import { getFromEnv } from "../utils/helpers.ts";
 
@@ -11,14 +12,12 @@ app.use(json());
 app.use(urlencoded({ extended: true }));
 
 app.use(authorizeUser);
+
 app.use("/api", api);
 
-app.use((err: any, req: any, res: any, next: any) => {
-  console.error(err);
-  res.status(err.status || 500).json({
-    message: err.message || "Internal Server Error",
-  });
-});
+// Hanlde errors
+app.use(globalErrorHanlder);
+
 
 app.listen(port, () => console.log(`Server is running on port ${port}`));
 
